@@ -46,6 +46,7 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
       { label: 'About Us', path: '/about' },
       { label: 'Our Experiences', path: '/experiences' },
       { label: 'Gallery', path: '/gallery' },
+      { label: 'Guest Reviews', path: '/reviews' },
     ],
   },
   {
