@@ -1,20 +1,42 @@
 import React from 'react';
-import { Sparkles, Eye, Plus, Check } from 'lucide-react';
+import { Sparkles, Eye, Plus, Minus } from 'lucide-react';
 import type { MenuItem } from '../../data/menuData';
 
 export interface MenuItemCardProps {
   item: MenuItem;
   onSelect: (item: MenuItem) => void;
-  onAddToTray?: (item: MenuItem) => void;
-  isInTray?: boolean;
+  quantity?: number;
+  onIncreaseQuantity?: (item: MenuItem) => void;
+  onDecreaseQuantity?: (item: MenuItem) => void;
+  onAddToTray?: (item: MenuItem) => void; // backwards compat
+  isInTray?: boolean; // backwards compat
 }
 
 export const MenuItemCard: React.FC<MenuItemCardProps> = ({
   item,
   onSelect,
+  quantity = 0,
+  onIncreaseQuantity,
+  onDecreaseQuantity,
   onAddToTray,
-  isInTray = false,
 }) => {
+  // Support either onIncreaseQuantity or onAddToTray
+  const handleAdd = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onIncreaseQuantity) {
+      onIncreaseQuantity(item);
+    } else if (onAddToTray) {
+      onAddToTray(item);
+    }
+  };
+
+  const handleDecrease = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDecreaseQuantity) {
+      onDecreaseQuantity(item);
+    }
+  };
+
   return (
     <div
       onClick={() => onSelect(item)}
@@ -82,7 +104,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
           <div className="flex items-center gap-1 overflow-hidden">
             {item.dietary && item.dietary.length > 0 ? (
               <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#062B45] bg-[#EAF2FF] px-2 py-0.5 rounded-md truncate">
-                <Sparkles className="w-2.5 h-2.5 text-[#C7A66B] shrink-0" />
+                <Sparkles className="w-2.5 h-2.5 text-[#C7A66B]" />
                 <span className="truncate">{item.dietary[0]}</span>
               </span>
             ) : (
@@ -90,29 +112,49 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
             )}
           </div>
 
-          {/* Card Actions */}
-          <div className="flex items-center gap-1.5">
-            {onAddToTray && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAddToTray(item);
-                }}
-                className={`p-1.5 rounded-md border transition-colors cursor-pointer ${
-                  isInTray
-                    ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
-                    : 'bg-white hover:bg-[#EAF2FF] border-[#D8E0EA] text-[#062B45]'
-                }`}
-                title={isInTray ? 'In your selection' : 'Add to dining selection'}
-                aria-label={`Add ${item.name} to dining selection`}
-              >
-                {isInTray ? (
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                ) : (
-                  <Plus className="w-3.5 h-3.5 text-[#C7A66B]" />
-                )}
-              </button>
+          {/* Card Actions: Plus / Minus Controls */}
+          <div className="flex items-center gap-2">
+            {(onIncreaseQuantity || onAddToTray) && (
+              quantity > 0 ? (
+                /* Quantity controls with + and - buttons */
+                <div
+                  className="flex items-center gap-1 bg-[#EAF2FF] border border-[#C7A66B]/50 rounded-lg p-0.5"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    onClick={handleDecrease}
+                    className="w-6 h-6 rounded bg-white hover:bg-gray-100 text-[#062B45] flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                    aria-label={`Decrease quantity of ${item.name}`}
+                    title="Decrease quantity"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span className="text-xs font-bold px-1.5 text-[#062B45] min-w-[16px] text-center">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleAdd}
+                    className="w-6 h-6 rounded bg-[#062B45] hover:bg-[#0A3D60] text-white flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                    aria-label={`Increase quantity of ${item.name}`}
+                    title="Increase quantity"
+                  >
+                    <Plus className="w-3 h-3 text-[#C7A66B]" />
+                  </button>
+                </div>
+              ) : (
+                /* Select Item Button */
+                <button
+                  type="button"
+                  onClick={handleAdd}
+                  className="inline-flex items-center gap-1 bg-[#062B45] hover:bg-[#0A3D60] text-white text-[11px] font-medium py-1.5 px-2.5 rounded-lg transition-colors shadow-2xs cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C7A66B]"
+                  aria-label={`Select ${item.name}`}
+                >
+                  <Plus className="w-3 h-3 text-[#C7A66B]" />
+                  <span>Select</span>
+                </button>
+              )
             )}
 
             <button
@@ -121,7 +163,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
                 e.stopPropagation();
                 onSelect(item);
               }}
-              className="text-xs font-semibold text-[#062B45] group-hover:text-[#C7A66B] transition-colors py-1 px-2 rounded hover:bg-[#EAF2FF]/50"
+              className="text-xs font-semibold text-[#062B45] hover:text-[#C7A66B] transition-colors py-1 px-1.5 rounded hover:bg-[#EAF2FF]/50"
             >
               Details
             </button>
