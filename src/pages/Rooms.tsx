@@ -146,9 +146,9 @@ export const Rooms: React.FC = () => {
           <img
             src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=2000&q=80"
             alt="Skyview Rooms & Suites Header"
-            className="w-full h-full object-cover object-center opacity-30"
+            className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#041D2F] via-[#062B45]/90 to-[#041D2F]/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#041D2F]/90 via-[#062B45]/65 to-[#041D2F]/40" />
         </div>
 
         <ContentContainer size="7xl" className="relative z-10">

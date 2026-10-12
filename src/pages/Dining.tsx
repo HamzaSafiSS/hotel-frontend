@@ -45,14 +45,14 @@ export const Dining: React.FC = () => {
         {/* Background Photograph */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=2400&q=85"
+            src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=2400&q=85"
             alt="Skyview Restaurant Atmosphere & Oceanfront Seating"
             className="w-full h-full object-cover object-center"
             loading="eager"
           />
-          {/* Deep Navy Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#062B45] via-[#062B45]/70 to-[#041D2F]/80" />
-          <div className="absolute inset-0 bg-radial from-transparent via-[#062B45]/40 to-[#041D2F]/85" />
+          {/* Refined Luxury Gradient Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#062B45] via-[#062B45]/50 to-[#041D2F]/40" />
+          <div className="absolute inset-0 bg-black/25" />
         </div>
 
         {/* Content Container */}

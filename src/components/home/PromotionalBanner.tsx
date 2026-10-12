@@ -15,7 +15,7 @@ export const PromotionalBanner: React.FC = () => {
           loading="lazy"
         />
         {/* Dark Luxury Gradient for Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#041D2F] via-[#062B45]/90 to-[#041D2F]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#041D2F]/90 via-[#062B45]/65 to-[#041D2F]/40" />
       </div>
 
       <ContentContainer size="7xl" className="relative z-10">

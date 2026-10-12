@@ -209,11 +209,11 @@ export const Experiences: React.FC = () => {
       <section className="relative bg-[#062B45] text-white py-20 sm:py-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80"
-            alt="Skyview Guest Experiences"
-            className="w-full h-full object-cover object-center opacity-30"
+            src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=2000&q=80"
+            alt="Skyview Guest Experiences and Adventures"
+            className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#041D2F] via-[#062B45]/90 to-[#041D2F]/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#041D2F]/90 via-[#062B45]/65 to-[#041D2F]/40" />
         </div>
 
         <ContentContainer size="7xl" className="relative z-10">

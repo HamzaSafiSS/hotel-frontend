@@ -26,9 +26,9 @@ export const About: React.FC = () => {
           <img
             src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=80"
             alt="Skyview Hotels & Resorts Coastal Architecture"
-            className="w-full h-full object-cover object-center opacity-25"
+            className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#041D2F] via-[#062B45]/90 to-[#041D2F]/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#041D2F]/90 via-[#062B45]/65 to-[#041D2F]/40" />
         </div>
 
         <ContentContainer size="7xl" className="relative z-10">

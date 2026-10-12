@@ -15,9 +15,9 @@ export const HeroSection: React.FC = () => {
           className="w-full h-full object-cover object-center scale-100 transition-transform duration-1000 ease-out"
           loading="eager"
         />
-        {/* Multilayered Luxury Gradient Overlays for optimal readability and depth */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#062B45] via-[#062B45]/65 to-[#041D2F]/75" />
-        <div className="absolute inset-0 bg-radial from-transparent via-[#062B45]/40 to-[#041D2F]/80" />
+        {/* Refined Luxury Gradient Overlays: reveals rich photographic detail while preserving typography contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#062B45] via-[#062B45]/45 to-[#041D2F]/40" />
+        <div className="absolute inset-0 bg-black/20" />
       </div>
 
       {/* Main Content Area */}
