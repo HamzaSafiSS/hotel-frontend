@@ -22,7 +22,12 @@ export interface MenuItemModalProps {
   onSelectServiceType?: (type: 'room' | 'table') => void;
   locationNumber?: string;
   onLocationNumberChange?: (val: string) => void;
-  onPlaceOrder?: (item: MenuItem) => void;
+  onPlaceOrder?: (
+    item: MenuItem,
+    quantity: number,
+    serviceType: 'room' | 'table',
+    locationNumber: string
+  ) => void;
   validationError?: string;
 }
 
@@ -30,9 +35,6 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
   item,
   isOpen,
   onClose,
-  quantity = 0,
-  onIncreaseQuantity,
-  onDecreaseQuantity,
   serviceType = null,
   onSelectServiceType,
   locationNumber = '',
@@ -40,11 +42,15 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
   onPlaceOrder,
   validationError = '',
 }) => {
+  const [quantity, setQuantity] = useState<number>(1);
   const [localError, setLocalError] = useState<string>('');
 
-  // Reset local error when modal opens or item changes
+  // Reset local error and initialize quantity to 1 when modal opens or item changes
   useEffect(() => {
-    setLocalError('');
+    if (isOpen) {
+      setQuantity(1);
+      setLocalError('');
+    }
   }, [isOpen, item]);
 
   // Handle ESC key press
@@ -95,7 +101,7 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
 
     setLocalError('');
     if (onPlaceOrder) {
-      onPlaceOrder(item);
+      onPlaceOrder(item, quantity, serviceType, locationNumber.trim());
     }
   };
 
@@ -179,26 +185,16 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
                   Item Quantity
                 </span>
                 <span className="text-[11px] text-[#60758B]">
-                  {quantity > 0 ? (
-                    <>
-                      ${item.price} each • Subtotal:{' '}
-                      <strong className="text-[#062B45] font-semibold">${lineTotal}</strong>
-                    </>
-                  ) : (
-                    <span>${item.price} each • Not selected yet</span>
-                  )}
+                  ${item.price} each • Subtotal:{' '}
+                  <strong className="text-[#062B45] font-semibold">${lineTotal}</strong>
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (onDecreaseQuantity) {
-                      onDecreaseQuantity(item);
-                    }
-                  }}
-                  disabled={quantity <= 0}
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
                   className="w-8 h-8 rounded-lg bg-white border border-[#D8E0EA] text-[#062B45] flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors cursor-pointer shadow-2xs"
                   title="Decrease quantity"
                   aria-label="Decrease quantity"
@@ -210,11 +206,7 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
                 </span>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (onIncreaseQuantity) {
-                      onIncreaseQuantity(item);
-                    }
-                  }}
+                  onClick={() => setQuantity((q) => q + 1)}
                   className="w-8 h-8 rounded-lg bg-[#062B45] text-white flex items-center justify-center hover:bg-[#0A3D60] transition-colors cursor-pointer shadow-2xs"
                   title="Increase quantity"
                   aria-label="Increase quantity"

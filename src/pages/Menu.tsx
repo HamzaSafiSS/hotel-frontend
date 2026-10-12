@@ -7,15 +7,11 @@ import {
   Sparkles,
   RotateCcw,
   ShoppingBag,
-  Plus,
-  Minus,
-  Trash2,
   CheckCircle,
-  AlertCircle,
-  MapPin,
   BedDouble,
   Utensils,
   Clock,
+  ArrowLeft,
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { MenuItemCard } from '../components/ui/MenuItemCard';
@@ -23,14 +19,14 @@ import { MenuItemModal } from '../components/ui/MenuItemModal';
 import { MENU_ITEMS, MENU_CATEGORIES } from '../data/menuData';
 import type { MenuItem } from '../data/menuData';
 
-interface OrderItem {
+export interface PlacedOrderItem {
   item: MenuItem;
   quantity: number;
 }
 
-interface PlacedOrderRecord {
+export interface PlacedOrderRecord {
   orderReference: string;
-  items: OrderItem[];
+  items: PlacedOrderItem[];
   totalPrice: number;
   totalQuantity: number;
   serviceType: 'room' | 'table';
@@ -51,20 +47,22 @@ export const Menu: React.FC = () => {
   // Search Query State
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Active Item for Details Modal
+  // Active Item for Order Form Modal
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
 
-  // Selected Food & Drinks Items State
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-  const [isTrayOpen, setIsTrayOpen] = useState<boolean>(false);
+  // List of all Placed Orders during this session
+  const [ordersList, setOrdersList] = useState<PlacedOrderRecord[]>([]);
 
-  // Mandatory Service Location State
+  // Selected order reference to display in the Details View
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+
+  // Drawer open state & view mode ('list' | 'details')
+  const [isTrayOpen, setIsTrayOpen] = useState<boolean>(false);
+  const [drawerViewMode, setDrawerViewMode] = useState<'list' | 'details'>('list');
+
+  // Service Location Preferences (persists for user convenience across orders)
   const [serviceType, setServiceType] = useState<'room' | 'table' | null>(null);
   const [locationNumber, setLocationNumber] = useState<string>('');
-
-  // Validation & Completed Order State
-  const [orderValidationError, setOrderValidationError] = useState<string>('');
-  const [placedOrder, setPlacedOrder] = useState<PlacedOrderRecord | null>(null);
 
   // Synchronize category state when searchParams changes
   useEffect(() => {
@@ -95,54 +93,6 @@ export const Menu: React.FC = () => {
     setSearchParams(nextParams);
   };
 
-  // 1. SELECT FOOD & DRINKS: INCREASE QUANTITY
-  const handleIncreaseQuantity = (item: MenuItem) => {
-    setOrderItems((prev) => {
-      const existing = prev.find((t) => t.item.id === item.id);
-      if (existing) {
-        return prev.map((t) =>
-          t.item.id === item.id ? { ...t, quantity: t.quantity + 1 } : t
-        );
-      }
-      return [...prev, { item, quantity: 1 }];
-    });
-    setOrderValidationError('');
-  };
-
-  // 1. SELECT FOOD & DRINKS: DECREASE QUANTITY & REMOVE IF ZERO
-  const handleDecreaseQuantity = (item: MenuItem) => {
-    setOrderItems((prev) =>
-      prev
-        .map((t) => {
-          if (t.item.id === item.id) {
-            const nextQty = t.quantity - 1;
-            return nextQty > 0 ? { ...t, quantity: nextQty } : null;
-          }
-          return t;
-        })
-        .filter((t): t is OrderItem => t !== null)
-    );
-  };
-
-  // Remove Item Completely
-  const handleRemoveItem = (itemId: string) => {
-    setOrderItems((prev) => prev.filter((t) => t.item.id !== itemId));
-  };
-
-  // Reset / Clear Order
-  const handleClearOrder = () => {
-    setOrderItems([]);
-    setPlacedOrder(null);
-    setOrderValidationError('');
-  };
-
-  // Map of item IDs to their selected quantities
-  const itemQuantitiesMap = useMemo(() => {
-    const map = new Map<string, number>();
-    orderItems.forEach((t) => map.set(t.item.id, t.quantity));
-    return map;
-  }, [orderItems]);
-
   // Filter items based on active category & search query
   const filteredItems = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -153,7 +103,7 @@ export const Menu: React.FC = () => {
         return false;
       }
 
-      // 2. Search query match in name or description
+      // 2. Search query match in name, description, category or dietary tags
       if (query) {
         const inName = item.name.toLowerCase().includes(query);
         const inDesc = item.description.toLowerCase().includes(query);
@@ -168,78 +118,61 @@ export const Menu: React.FC = () => {
     });
   }, [selectedCategory, searchQuery]);
 
-  // Order Calculations: Automatically updates whenever any item quantity changes
-  const totalItemCount = useMemo(() => {
-    return orderItems.reduce((acc, curr) => acc + curr.quantity, 0);
-  }, [orderItems]);
+  // Handle Placing an Order from the Order Form Modal
+  const handlePlaceOrder = (
+    item: MenuItem,
+    quantity: number,
+    orderServiceType: 'room' | 'table',
+    orderLocationNumber: string
+  ) => {
+    // Save service location preference
+    setServiceType(orderServiceType);
+    setLocationNumber(orderLocationNumber);
 
-  const totalOrderPrice = useMemo(() => {
-    return orderItems.reduce((acc, curr) => acc + curr.item.price * curr.quantity, 0);
-  }, [orderItems]);
-
-  // 3. PLACE ORDER VALIDATION & SUBMISSION
-  const handlePlaceOrder = (directItem?: MenuItem) => {
-    // Determine active items list
-    let activeItems = [...orderItems];
-
-    // If placed from a single item modal and it's not yet in the list, add it
-    if (directItem && !activeItems.some((i) => i.item.id === directItem.id)) {
-      activeItems = [...activeItems, { item: directItem, quantity: 1 }];
-      setOrderItems(activeItems);
-    }
-
-    // Validation 1: At least one menu item selected with valid quantities
-    if (activeItems.length === 0 || activeItems.every((i) => i.quantity <= 0)) {
-      setOrderValidationError('Please select at least one menu item before placing your order.');
-      return;
-    }
-
-    // Validation 2: Service type must be selected
-    if (!serviceType) {
-      setOrderValidationError('Please select where you want your order delivered (Room Service or Table Service).');
-      return;
-    }
-
-    // Validation 3: Corresponding room or table number must be provided
-    if (!locationNumber || !locationNumber.trim()) {
-      setOrderValidationError(
-        serviceType === 'room'
-          ? 'Please enter your room or suite number.'
-          : 'Please enter your table or cabana number.'
-      );
-      return;
-    }
-
-    // Calculate total price
-    const calculatedTotal = activeItems.reduce(
-      (acc, curr) => acc + curr.item.price * curr.quantity,
-      0
-    );
-    const calculatedQty = activeItems.reduce((acc, curr) => acc + curr.quantity, 0);
-
-    // Generate safe demo order reference (e.g. SKY-ORD-8492)
+    const calculatedTotal = item.price * quantity;
     const randomCode = Math.floor(1000 + Math.random() * 9000);
-    const orderRecord: PlacedOrderRecord = {
+
+    const newOrder: PlacedOrderRecord = {
       orderReference: `SKY-ORD-${randomCode}`,
-      items: activeItems,
+      items: [{ item, quantity }],
       totalPrice: calculatedTotal,
-      totalQuantity: calculatedQty,
-      serviceType,
-      serviceTypeLabel: serviceType === 'room' ? 'Room Service' : 'Table Service',
-      locationNumber: locationNumber.trim(),
+      totalQuantity: quantity,
+      serviceType: orderServiceType,
+      serviceTypeLabel: orderServiceType === 'room' ? 'Room Service' : 'Table Service',
+      locationNumber: orderLocationNumber,
       placedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       status: 'Order Placed — Kitchen Preparing',
     };
 
-    setPlacedOrder(orderRecord);
-    setOrderValidationError('');
-    setSelectedItem(null); // Close modal if open
-    setIsTrayOpen(true); // Open drawer showing complete confirmation
+    // Prepend to orders list
+    setOrdersList((prev) => [newOrder, ...prev]);
+    // Specifically select this new order for details view
+    setSelectedOrderId(newOrder.orderReference);
+    setDrawerViewMode('details');
+    // Close the order form modal
+    setSelectedItem(null);
+    // Open drawer to show the placed order confirmation
+    setIsTrayOpen(true);
   };
+
+  // Handle Clicking a Specific Order in the "Your Order" List
+  const handleSelectOrder = (orderRef: string) => {
+    setSelectedOrderId(orderRef);
+    setDrawerViewMode('details');
+  };
+
+  // Look up the exact order currently selected for the Details View
+  const activeViewedOrder = useMemo(() => {
+    if (selectedOrderId) {
+      const found = ordersList.find((o) => o.orderReference === selectedOrderId);
+      if (found) return found;
+    }
+    return ordersList[0] || null;
+  }, [ordersList, selectedOrderId]);
 
   return (
     <div className="flex-1 flex flex-col bg-white">
-      {/* 3.A COMPACT REFINED PAGE HEADER */}
+      {/* PAGE HEADER */}
       <section className="relative bg-[#062B45] text-white py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
@@ -276,16 +209,16 @@ export const Menu: React.FC = () => {
 
           {/* Description */}
           <p className="text-sm sm:text-base text-gray-200 max-w-2xl font-light leading-relaxed">
-            Browse our selection of dishes, local specialties, desserts, and refreshing beverages.
+            Browse our selection of dishes, local specialties, desserts, and refreshing beverages. Click "Select" on any item to customize and place your order.
           </p>
         </ContentContainer>
       </section>
 
-      {/* 3.B & 3.C CATEGORY NAVIGATION & SEARCH CONTROLS */}
+      {/* CATEGORY NAVIGATION & SEARCH CONTROLS */}
       <section className="sticky top-16 sm:top-20 z-20 bg-white/95 backdrop-blur-md border-b border-[#D8E0EA] py-4 shadow-xs">
         <ContentContainer size="7xl">
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-            {/* 3.B Menu Category Tabs / Pills (Scrollable on Mobile) */}
+            {/* Menu Category Tabs / Pills (Scrollable on Mobile) */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
               {MENU_CATEGORIES.map((cat) => {
                 const isActive = selectedCategory === cat.id;
@@ -306,7 +239,7 @@ export const Menu: React.FC = () => {
               })}
             </div>
 
-            {/* 3.C Menu Search Input & Order Drawer Trigger */}
+            {/* Menu Search Input & "Your Order" Drawer Trigger */}
             <div className="flex items-center gap-2.5 shrink-0">
               <div className="relative flex-1 sm:w-64">
                 <Search className="w-4 h-4 text-[#60758B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -330,17 +263,25 @@ export const Menu: React.FC = () => {
                 )}
               </div>
 
-              {/* Order Selection Drawer Toggle */}
-              {totalItemCount > 0 && (
+              {/* "Your Order" / Placed Orders Drawer Toggle */}
+              {ordersList.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setIsTrayOpen(true)}
+                  onClick={() => {
+                    if (ordersList.length > 1) {
+                      setDrawerViewMode('list');
+                    } else {
+                      setSelectedOrderId(ordersList[0].orderReference);
+                      setDrawerViewMode('details');
+                    }
+                    setIsTrayOpen(true);
+                  }}
                   className="bg-[#062B45] hover:bg-[#0A3D60] text-white text-xs font-medium px-3.5 py-2 rounded-lg flex items-center gap-2 shadow-xs transition-colors cursor-pointer shrink-0 animate-fadeIn"
-                  title="View your dining order"
+                  title="View your orders"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 text-[#C7A66B]" />
                   <span>
-                    Your Order ({totalItemCount}) • ${totalOrderPrice}
+                    {ordersList.length === 1 ? 'Your Order (1)' : `Your Orders (${ordersList.length})`}
                   </span>
                 </button>
               )}
@@ -349,7 +290,7 @@ export const Menu: React.FC = () => {
         </ContentContainer>
       </section>
 
-      {/* 3.D MENU ITEMS GRID */}
+      {/* MENU ITEMS GRID */}
       <section className="py-10 sm:py-16 bg-[#EAF2FF]/15 flex-1">
         <ContentContainer size="7xl">
           {/* Active Filter Status & Count */}
@@ -388,22 +329,16 @@ export const Menu: React.FC = () => {
             </div>
           </div>
 
-          {/* Menu Items Grid with Quantity Controls */}
+          {/* Menu Items Grid: Clicking "Select" opens the Order Form Modal */}
           {filteredItems.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 items-stretch">
-              {filteredItems.map((item) => {
-                const currentQty = itemQuantitiesMap.get(item.id) || 0;
-                return (
-                  <MenuItemCard
-                    key={item.id}
-                    item={item}
-                    quantity={currentQty}
-                    onSelect={(selected) => setSelectedItem(selected)}
-                    onIncreaseQuantity={handleIncreaseQuantity}
-                    onDecreaseQuantity={handleDecreaseQuantity}
-                  />
-                );
-              })}
+              {filteredItems.map((item) => (
+                <MenuItemCard
+                  key={item.id}
+                  item={item}
+                  onSelect={(selected) => setSelectedItem(selected)}
+                />
+              ))}
             </div>
           ) : (
             /* Friendly Empty State */
@@ -430,23 +365,19 @@ export const Menu: React.FC = () => {
         </ContentContainer>
       </section>
 
-      {/* 3.F MENU ITEM DETAILS MODAL WITH "PLACE ORDER" BUTTON */}
+      {/* 1. ORDER FORM MODAL: Displayed when user clicks "Select" */}
       <MenuItemModal
         item={selectedItem}
         isOpen={selectedItem !== null}
         onClose={() => setSelectedItem(null)}
-        quantity={selectedItem ? itemQuantitiesMap.get(selectedItem.id) || 0 : 0}
-        onIncreaseQuantity={handleIncreaseQuantity}
-        onDecreaseQuantity={handleDecreaseQuantity}
         serviceType={serviceType}
         onSelectServiceType={setServiceType}
         locationNumber={locationNumber}
         onLocationNumberChange={setLocationNumber}
         onPlaceOrder={handlePlaceOrder}
-        validationError={orderValidationError}
       />
 
-      {/* 3.G SELECTED-ORDER SECTION / DRAWER */}
+      {/* 2. "YOUR ORDER" DRAWER: List & Specific Order Details Views */}
       {isTrayOpen && (
         <div
           role="dialog"
@@ -461,11 +392,16 @@ export const Menu: React.FC = () => {
           >
             {/* Drawer Header */}
             <div className="p-5 border-b border-[#D8E0EA] flex items-center justify-between bg-gray-50">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <ShoppingBag className="w-5 h-5 text-[#C7A66B]" />
                 <h3 id="order-drawer-title" className="font-serif text-lg font-medium text-[#062B45]">
-                  {placedOrder ? 'Order Confirmation' : 'Selected Order'}
+                  {drawerViewMode === 'details' ? 'Order Details' : 'Your Order List'}
                 </h3>
+                {ordersList.length > 0 && (
+                  <span className="text-[11px] font-semibold bg-[#EAF2FF] text-[#062B45] px-2.5 py-0.5 rounded-full border border-[#D8E0EA]">
+                    {ordersList.length} {ordersList.length === 1 ? 'Order' : 'Orders'}
+                  </span>
+                )}
               </div>
               <button
                 type="button"
@@ -477,65 +413,121 @@ export const Menu: React.FC = () => {
               </button>
             </div>
 
-            {/* Drawer Body: Shows Placed Order Confirmation OR Selected Items List */}
-            {placedOrder ? (
-              /* A. COMPLETED ORDER CONFIRMATION VIEW */
+            {/* Drawer Content */}
+            {drawerViewMode === 'details' && activeViewedOrder ? (
+              /* A. SPECIFIC ORDER DETAILS VIEW */
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                <div className="text-center">
+                {/* Back to Order List Navigation */}
+                <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#D8E0EA]/70">
+                  {ordersList.length > 1 ? (
+                    <button
+                      type="button"
+                      onClick={() => setDrawerViewMode('list')}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#062B45] hover:text-[#C7A66B] transition-colors py-1.5 px-3 rounded-lg bg-[#EAF2FF] hover:bg-[#EAF2FF]/80 cursor-pointer"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Back to All Orders ({ordersList.length})</span>
+                    </button>
+                  ) : (
+                    <span className="text-xs font-medium text-[#60758B]">Your Placed Order</span>
+                  )}
+
+                  <span className="text-[11px] font-mono font-bold text-[#062B45] bg-gray-100 px-2 py-0.5 rounded border border-[#D8E0EA]">
+                    {activeViewedOrder.orderReference}
+                  </span>
+                </div>
+
+                {/* Direct Order Switcher Tabs (when user has multiple orders) */}
+                {ordersList.length > 1 && (
+                  <div>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#60758B] block mb-1.5">
+                      Switch Order:
+                    </span>
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                      {ordersList.map((ord) => {
+                        const isCur = ord.orderReference === activeViewedOrder.orderReference;
+                        return (
+                          <button
+                            key={ord.orderReference}
+                            type="button"
+                            onClick={() => setSelectedOrderId(ord.orderReference)}
+                            className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-medium transition-all cursor-pointer whitespace-nowrap ${
+                              isCur
+                                ? 'bg-[#062B45] text-white shadow-xs'
+                                : 'bg-gray-100 hover:bg-gray-200 text-[#60758B]'
+                            }`}
+                          >
+                            {ord.orderReference} (${ord.totalPrice})
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Order Confirmation Banner */}
+                <div className="text-center pt-1">
                   <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-3 border border-emerald-200">
                     <CheckCircle className="w-7 h-7 text-emerald-600" />
                   </div>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 mb-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>{placedOrder.status}</span>
+                    <span>{activeViewedOrder.status}</span>
                   </span>
                   <h4 className="font-serif text-2xl font-normal text-[#062B45]">
-                    Order Successfully Placed!
+                    Order Placed Successfully!
                   </h4>
                   <p className="text-xs text-[#60758B] mt-1">
-                    Your order has been transmitted directly to the Skyview Kitchen.
+                    Your request has been received by the Skyview culinary team.
                   </p>
                 </div>
 
-                {/* Reference & Service Details Box */}
+                {/* Reference & Service Details Box for THIS specific order */}
                 <div className="bg-[#EAF2FF]/60 border border-[#D8E0EA] rounded-xl p-4 text-xs space-y-2.5">
                   <div className="flex items-center justify-between border-b border-[#D8E0EA] pb-2">
                     <span className="text-[#60758B]">Order Reference:</span>
                     <strong className="font-mono text-sm text-[#062B45]">
-                      {placedOrder.orderReference}
+                      {activeViewedOrder.orderReference}
                     </strong>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#60758B]">Service Option:</span>
-                    <strong className="text-[#062B45]">{placedOrder.serviceTypeLabel}</strong>
+                    <strong className="text-[#062B45]">{activeViewedOrder.serviceTypeLabel}</strong>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#60758B]">
-                      {placedOrder.serviceType === 'room' ? 'Room / Suite Number:' : 'Table Number:'}
+                      {activeViewedOrder.serviceType === 'room' ? 'Room / Suite Number:' : 'Table Number:'}
                     </span>
-                    <strong className="text-[#062B45]">{placedOrder.locationNumber}</strong>
+                    <strong className="text-[#062B45]">{activeViewedOrder.locationNumber}</strong>
                   </div>
                   <div className="flex items-center justify-between border-t border-[#D8E0EA] pt-2">
-                    <span className="text-[#60758B]">Order Time:</span>
-                    <span className="text-[#18324A]">{placedOrder.placedAt}</span>
+                    <span className="text-[#60758B]">Order Placed At:</span>
+                    <span className="text-[#18324A]">{activeViewedOrder.placedAt}</span>
                   </div>
                 </div>
 
-                {/* Itemized Order Summary */}
+                {/* Itemized Order Summary for THIS specific order */}
                 <div className="bg-gray-50 border border-[#D8E0EA] rounded-xl p-4 text-xs">
                   <h5 className="font-semibold text-[#062B45] mb-3 pb-2 border-b border-[#D8E0EA]">
-                    Ordered Items ({placedOrder.totalQuantity})
+                    Ordered Items ({activeViewedOrder.totalQuantity})
                   </h5>
                   <div className="space-y-3">
-                    {placedOrder.items.map(({ item, quantity }) => (
-                      <div key={item.id} className="flex items-center justify-between">
-                        <div>
-                          <strong className="text-[#18324A] block">{item.name}</strong>
-                          <span className="text-[11px] text-[#60758B]">
-                            {quantity} × ${item.price}
-                          </span>
+                    {activeViewedOrder.items.map(({ item, quantity }) => (
+                      <div key={item.id} className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            className="w-10 h-10 rounded-lg object-cover object-center shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <strong className="text-[#18324A] block truncate">{item.name}</strong>
+                            <span className="text-[11px] text-[#60758B]">
+                              {quantity} × ${item.price}
+                            </span>
+                          </div>
                         </div>
-                        <span className="font-semibold text-[#062B45]">
+                        <span className="font-semibold text-[#062B45] shrink-0">
                           ${item.price * quantity}
                         </span>
                       </div>
@@ -544,7 +536,7 @@ export const Menu: React.FC = () => {
 
                   <div className="mt-4 pt-3 border-t border-[#D8E0EA] flex items-center justify-between text-sm font-bold text-[#062B45]">
                     <span>Total Order Price</span>
-                    <span className="font-serif text-lg">${placedOrder.totalPrice}</span>
+                    <span className="font-serif text-lg text-[#062B45]">${activeViewedOrder.totalPrice}</span>
                   </div>
                 </div>
 
@@ -558,13 +550,15 @@ export const Menu: React.FC = () => {
 
                 {/* Action Buttons */}
                 <div className="pt-2 flex flex-col gap-2">
-                  <button
-                    type="button"
-                    onClick={handleClearOrder}
-                    className="w-full bg-[#062B45] hover:bg-[#0A3D60] text-white text-xs font-semibold py-3 px-4 rounded-xl transition-colors cursor-pointer"
-                  >
-                    Start a New Order
-                  </button>
+                  {ordersList.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setDrawerViewMode('list')}
+                      className="w-full bg-[#062B45] hover:bg-[#0A3D60] text-white text-xs font-semibold py-3 px-4 rounded-xl transition-colors cursor-pointer text-center"
+                    >
+                      View All Orders ({ordersList.length})
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => setIsTrayOpen(false)}
@@ -575,215 +569,129 @@ export const Menu: React.FC = () => {
                 </div>
               </div>
             ) : (
-              /* B. ACTIVE SELECTED ITEMS & LOCATION FLOW */
-              <div className="flex-1 flex flex-col justify-between overflow-hidden">
-                {/* Items List */}
-                <div className="flex-1 overflow-y-auto p-5 space-y-4">
-                  {orderItems.length > 0 ? (
-                    orderItems.map(({ item, quantity }) => (
-                      <div
-                        key={item.id}
-                        className="p-3.5 rounded-xl border border-[#D8E0EA] bg-white flex items-center justify-between gap-3 shadow-2xs"
-                      >
-                        <img
-                          src={item.imageUrl}
-                          alt={item.name}
-                          className="w-14 h-14 rounded-lg object-cover object-center shrink-0"
-                        />
-
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-xs font-semibold text-[#062B45] truncate">
-                            {item.name}
-                          </h4>
-                          <span className="text-[11px] text-[#60758B] block">
-                            ${item.price} each • {item.categoryLabel}
-                          </span>
-                          <strong className="text-xs text-[#062B45]">
-                            ${item.price * quantity}
-                          </strong>
-                        </div>
-
-                        {/* Plus and Minus Quantity Controls */}
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => handleDecreaseQuantity(item)}
-                            className="w-6 h-6 rounded bg-gray-100 hover:bg-gray-200 text-[#062B45] flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
-                            title="Decrease quantity"
-                            aria-label={`Decrease quantity of ${item.name}`}
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="text-xs font-semibold w-5 text-center text-[#18324A]">
-                            {quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleIncreaseQuantity(item)}
-                            className="w-6 h-6 rounded bg-gray-100 hover:bg-gray-200 text-[#062B45] flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
-                            title="Increase quantity"
-                            aria-label={`Increase quantity of ${item.name}`}
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveItem(item.id)}
-                            className="w-6 h-6 rounded hover:bg-red-50 text-red-600 flex items-center justify-center transition-colors cursor-pointer ml-1"
-                            title="Remove item"
-                            aria-label={`Remove ${item.name}`}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-12 text-[#60758B] text-xs">
-                      <ShoppingBag className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                      <span>No dishes added to your selection yet.</span>
-                    </div>
-                  )}
+              /* B. "YOUR ORDER" LIST VIEW: Displayed when clicking "Your Orders" or returning from details */
+              <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-[#D8E0EA]">
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#062B45]">
+                      Your Order History
+                    </h4>
+                    <p className="text-[11px] text-[#60758B]">
+                      Click any order below to view its specific details.
+                    </p>
+                  </div>
+                  <span className="text-xs font-semibold text-[#062B45] bg-[#EAF2FF] px-2.5 py-1 rounded-lg">
+                    {ordersList.length} {ordersList.length === 1 ? 'Order' : 'Orders'}
+                  </span>
                 </div>
 
-                {/* Footer: Service Location + Total + Place Order Button */}
-                {orderItems.length > 0 && (
-                  <div className="p-5 border-t border-[#D8E0EA] bg-gray-50 flex flex-col gap-4 overflow-y-auto max-h-[50vh]">
-                    {/* 2. SELECT SERVICE LOCATION (MANDATORY) */}
-                    <div className="p-3.5 rounded-xl bg-white border border-[#D8E0EA] flex flex-col gap-2.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-[#062B45] flex items-center gap-1.5">
-                          <MapPin className="w-3.5 h-3.5 text-[#C7A66B]" />
-                          <span>Service Location</span>
-                          <span className="text-red-500 font-bold">*</span>
-                        </span>
-                        <span className="text-[10px] text-[#60758B]">Mandatory</span>
-                      </div>
-
-                      {/* Options */}
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setServiceType('room');
-                            setOrderValidationError('');
+                {ordersList.length > 0 ? (
+                  <div className="space-y-3">
+                    {ordersList.map((order) => {
+                      const isSelected = order.orderReference === selectedOrderId;
+                      return (
+                        <div
+                          key={order.orderReference}
+                          onClick={() => handleSelectOrder(order.orderReference)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleSelectOrder(order.orderReference);
+                            }
                           }}
-                          className={`p-2.5 rounded-lg border text-left flex items-center gap-2 transition-all cursor-pointer ${
-                            serviceType === 'room'
-                              ? 'bg-[#EAF2FF] border-[#062B45] text-[#062B45] font-semibold ring-1 ring-[#062B45]/20'
-                              : 'bg-white border-[#D8E0EA] text-[#60758B] hover:border-[#062B45]/40'
+                          className={`p-4 rounded-xl border text-left transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-md ${
+                            isSelected
+                              ? 'bg-[#EAF2FF]/40 border-[#062B45] ring-2 ring-[#062B45]/20'
+                              : 'bg-white border-[#D8E0EA] hover:border-[#C7A66B]'
                           }`}
                         >
-                          <BedDouble className={`w-3.5 h-3.5 ${serviceType === 'room' ? 'text-[#062B45]' : 'text-[#C7A66B]'}`} />
-                          <span className="text-xs">Room Service</span>
-                        </button>
+                          {/* Top Row: Ref, Time & Status */}
+                          <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-[#D8E0EA]/70">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-bold text-[#062B45]">
+                                {order.orderReference}
+                              </span>
+                              <span className="text-[10px] text-[#60758B]">
+                                • {order.placedAt}
+                              </span>
+                            </div>
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              <span>Preparing</span>
+                            </span>
+                          </div>
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setServiceType('table');
-                            setOrderValidationError('');
-                          }}
-                          className={`p-2.5 rounded-lg border text-left flex items-center gap-2 transition-all cursor-pointer ${
-                            serviceType === 'table'
-                              ? 'bg-[#EAF2FF] border-[#062B45] text-[#062B45] font-semibold ring-1 ring-[#062B45]/20'
-                              : 'bg-white border-[#D8E0EA] text-[#60758B] hover:border-[#062B45]/40'
-                          }`}
-                        >
-                          <Utensils className={`w-3.5 h-3.5 ${serviceType === 'table' ? 'text-[#062B45]' : 'text-[#C7A66B]'}`} />
-                          <span className="text-xs">Table Service</span>
-                        </button>
-                      </div>
+                          {/* Location Row */}
+                          <div className="flex items-center gap-1.5 text-xs text-[#18324A] font-medium mb-2.5">
+                            {order.serviceType === 'room' ? (
+                              <BedDouble className="w-3.5 h-3.5 text-[#C7A66B]" />
+                            ) : (
+                              <Utensils className="w-3.5 h-3.5 text-[#C7A66B]" />
+                            )}
+                            <span>
+                              {order.serviceTypeLabel} — {order.locationNumber}
+                            </span>
+                          </div>
 
-                      {/* Only show relevant field after selecting the corresponding option */}
-                      {serviceType === 'room' && (
-                        <div className="animate-fadeIn">
-                          <label
-                            htmlFor="drawer-room-input"
-                            className="block text-[11px] font-bold uppercase tracking-wider text-[#062B45] mb-1"
-                          >
-                            Room or Suite Number <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            id="drawer-room-input"
-                            type="text"
-                            placeholder="e.g. Room 204, Ocean Suite 301, Villa 4"
-                            value={locationNumber}
-                            onChange={(e) => {
-                              setLocationNumber(e.target.value);
-                              setOrderValidationError('');
-                            }}
-                            className="w-full bg-[#EAF2FF]/30 border border-[#D8E0EA] rounded-lg px-3 py-2 text-xs font-medium text-[#18324A] placeholder:text-[#60758B]/60 outline-none focus:border-[#062B45] focus:bg-white transition-all"
-                          />
+                          {/* Items Summary */}
+                          <div className="space-y-1 mb-3 bg-gray-50/70 p-2.5 rounded-lg border border-[#D8E0EA]/50">
+                            {order.items.map(({ item, quantity }) => (
+                              <div
+                                key={item.id}
+                                className="flex items-center justify-between text-xs text-[#60758B]"
+                              >
+                                <span className="truncate pr-2">
+                                  {quantity}× {item.name}
+                                </span>
+                                <span className="font-medium text-[#062B45] shrink-0">
+                                  ${item.price * quantity}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Footer Row: Total & "View Details →" */}
+                          <div className="pt-1 flex items-center justify-between">
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-[#60758B] block">
+                                Total
+                              </span>
+                              <span className="font-serif text-base font-bold text-[#062B45]">
+                                ${order.totalPrice}
+                              </span>
+                            </div>
+
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#062B45] hover:text-[#C7A66B] transition-colors py-1 px-2.5 rounded-lg bg-[#EAF2FF]/50 hover:bg-[#EAF2FF]">
+                              <span>View Details</span>
+                              <ChevronRight className="w-3.5 h-3.5 text-[#C7A66B]" />
+                            </span>
+                          </div>
                         </div>
-                      )}
-
-                      {serviceType === 'table' && (
-                        <div className="animate-fadeIn">
-                          <label
-                            htmlFor="drawer-table-input"
-                            className="block text-[11px] font-bold uppercase tracking-wider text-[#062B45] mb-1"
-                          >
-                            Table or Cabana Number <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            id="drawer-table-input"
-                            type="text"
-                            placeholder="e.g. Table 12, Seaside Terrace 4, Cabana 2"
-                            value={locationNumber}
-                            onChange={(e) => {
-                              setLocationNumber(e.target.value);
-                              setOrderValidationError('');
-                            }}
-                            className="w-full bg-[#EAF2FF]/30 border border-[#D8E0EA] rounded-lg px-3 py-2 text-xs font-medium text-[#18324A] placeholder:text-[#60758B]/60 outline-none focus:border-[#062B45] focus:bg-white transition-all"
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Validation Error Message */}
-                    {orderValidationError && (
-                      <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-center gap-2 animate-fadeIn">
-                        <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                        <span>{orderValidationError}</span>
-                      </div>
-                    )}
-
-                    {/* Subtotal & Auto-updating Total Price */}
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-xs text-[#60758B]">
-                        <span>Selected Items</span>
-                        <span>{totalItemCount}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-base font-bold text-[#062B45]">
-                        <span>Total Price</span>
-                        <span className="text-xl font-serif text-[#062B45]">${totalOrderPrice}</span>
-                      </div>
-                    </div>
-
-                    {/* 3. PLACE ORDER BUTTON */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handlePlaceOrder()}
-                        className="flex-1 bg-[#062B45] hover:bg-[#0A3D60] active:bg-[#041D2F] text-white text-xs font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C7A66B]"
-                      >
-                        <Sparkles className="w-4 h-4 text-[#C7A66B]" />
-                        <span>Place Order</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={handleClearOrder}
-                        className="p-3 rounded-xl border border-[#D8E0EA] text-[#60758B] hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                        title="Clear all items"
-                        aria-label="Clear order selection"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  /* Empty State */
+                  <div className="text-center py-12 text-[#60758B] text-xs">
+                    <ShoppingBag className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                    <p className="font-medium text-[#062B45] mb-1">No Orders Placed Yet</p>
+                    <p className="max-w-xs mx-auto">
+                      Browse our digital menu and click "Select" on any item to place an order.
+                    </p>
                   </div>
                 )}
+
+                <div className="pt-4 border-t border-[#D8E0EA]">
+                  <button
+                    type="button"
+                    onClick={() => setIsTrayOpen(false)}
+                    className="w-full bg-gray-100 hover:bg-gray-200 text-[#18324A] text-xs font-semibold py-2.5 px-4 rounded-xl transition-colors cursor-pointer"
+                  >
+                    Close Drawer
+                  </button>
+                </div>
               </div>
             )}
           </div>
