@@ -7,6 +7,7 @@ import { ScrollToTop } from './components/common/ScrollToTop';
 import { Home } from './pages/Home';
 import { About } from './pages/About';
 import { Rooms } from './pages/Rooms';
+import { RoomDetail } from './pages/RoomDetail';
 import { Facilities } from './pages/Facilities';
 import { Dining } from './pages/Dining';
 import { Menu } from './pages/Menu';
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="rooms" element={<Rooms />} />
+          <Route path="rooms/:roomId" element={<RoomDetail />} />
           <Route path="facilities" element={<Facilities />} />
           <Route path="dining" element={<Dining />} />
           <Route path="menu" element={<Menu />} />

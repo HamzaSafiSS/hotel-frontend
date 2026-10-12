@@ -41,9 +41,12 @@ export const FeaturedRoomsSection: React.FC = () => {
               description={room.description}
               guests={room.guests}
               bedType={room.bedType}
+              size={room.size}
+              keyAmenities={room.keyAmenities}
               pricePerNight={room.pricePerNight}
               imageUrl={room.imageUrl}
-              detailsUrl="/rooms"
+              detailsUrl={`/rooms/${room.id}`}
+              bookUrl={`/booking?roomId=${room.id}`}
             />
           ))}
         </div>

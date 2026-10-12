@@ -95,10 +95,17 @@ export interface RoomItem {
   category: string;
   tagline: string;
   description: string;
+  fullDescription: string;
   guests: number;
   bedType: string;
+  size: string;
   pricePerNight: number;
   imageUrl: string;
+  galleryImages: string[];
+  keyAmenities: string[];
+  amenities: string[];
+  highlights: string[];
+  cancellationPolicy: string;
   featured?: boolean;
 }
 
@@ -108,11 +115,40 @@ export const SAMPLE_ROOMS: RoomItem[] = [
     title: 'Deluxe Room',
     category: 'Deluxe',
     tagline: 'Refined comfort with scenic garden and courtyard views',
-    description: 'A comfortable and elegant room with premium bedding, a workspace, and modern amenities.',
+    description: 'A comfortable and elegant room with premium bedding, a workspace, modern bathroom, and complimentary Wi-Fi.',
+    fullDescription:
+      'Immerse yourself in understated luxury within our thoughtfully appointed Deluxe Room. Designed for restorative relaxation and productive comfort, this room features a bespoke king-size bed draped in fine linens, an ergonomic work desk for remote convenience, a spa-inspired marble rain bathroom, and peaceful views overlooking the manicured resort flora.',
     guests: 2,
     bedType: '1 King Bed',
+    size: '30 m²',
     pricePerNight: 120,
-    imageUrl: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=1200&q=80',
+    ],
+    keyAmenities: ['30 m²', 'Dedicated Workspace', 'High-Speed Wi-Fi', 'Marble Bath'],
+    amenities: [
+      'Complimentary High-Speed Wi-Fi',
+      'Premium Egyptian Cotton Linens',
+      'Designer Marble Bathroom with Rain Shower',
+      'Dedicated Ergonomic Workspace',
+      'Espresso Pod Machine & Herbal Teas',
+      '55-inch Smart 4K UHD TV',
+      'Individually Controlled Climate Control',
+      'Secure Electronic Safe & Mini Bar',
+      'Luxury Botanical Bath Amenities',
+      'Daily Evening Turndown Service',
+    ],
+    highlights: [
+      'Courtyard and botanical garden views',
+      'Acoustic soundproofing for deep sleep',
+      'Bespoke plush bathrobe and slippers',
+      'Convenient high-speed bedside USB charging',
+    ],
+    cancellationPolicy: 'Free cancellation up to 48 hours prior to check-in. Non-refundable within 48 hours. Portfolio demonstration policy.',
     featured: true,
   },
   {
@@ -120,11 +156,40 @@ export const SAMPLE_ROOMS: RoomItem[] = [
     title: 'Ocean View Suite',
     category: 'Suite',
     tagline: 'Panoramic sunset horizons with a private sun-drenched balcony',
-    description: 'A spacious suite featuring scenic views, a comfortable sitting area, and a private balcony.',
+    description: 'A spacious suite featuring scenic views, a comfortable sitting area, private balcony, and panoramic ocean vistas.',
+    fullDescription:
+      'Perched high above the coastline, the Ocean View Suite invites you to witness shifting marine horizons from dawn till sunset. Featuring a separate open-plan lounge with comfortable designer seating, a private balcony with sunset chaises, and floor-to-ceiling glass doors, this suite pairs expansive space with refined coastal elegance.',
     guests: 3,
     bedType: '1 King Bed',
+    size: '48 m²',
     pricePerNight: 180,
-    imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80',
+    ],
+    keyAmenities: ['48 m²', 'Private Balcony', 'Ocean Horizons', 'Sitting Lounge'],
+    amenities: [
+      'Furnished Private Sun Terrace Balcony',
+      'Panoramic Ocean and Coastal Views',
+      'Separate Comfortable Lounge Sitting Area',
+      'Deep Soaking Freestanding Bathtub',
+      'Complimentary Ultra-Fast Wi-Fi',
+      'Curated Sommelier Wine & Snack Selection',
+      'Espresso Machine & Selection of Organic Teas',
+      '65-inch Smart 4K UHD TV with Streaming',
+      'Integrated Bluetooth Sound System',
+      'Priority Concierge & Dining Reservations',
+    ],
+    highlights: [
+      'Unobstructed sunset ocean horizon',
+      'Outdoor cushioned daybeds on balcony',
+      'Spacious double vanity marble counter',
+      'Complimentary sunset cocktail service',
+    ],
+    cancellationPolicy: 'Free cancellation up to 48 hours prior to check-in. Non-refundable within 48 hours. Portfolio demonstration policy.',
     featured: true,
   },
   {
@@ -132,11 +197,40 @@ export const SAMPLE_ROOMS: RoomItem[] = [
     title: 'Private Pool Villa',
     category: 'Villa',
     tagline: 'Secluded tropical sanctuary with a private outdoor plunge pool',
-    description: 'A private retreat with an outdoor plunge pool, a relaxing lounge, and generous living space.',
+    description: 'A private retreat with an outdoor plunge pool, relaxing lounge, and generous living space surrounded by greenery.',
+    fullDescription:
+      'The crown jewel of secluded resort living. Our Private Pool Villa offers uninterrupted privacy enclosed by tropical gardens and stone walls. Step directly from your master suite onto a private sun deck featuring a shimmering infinity plunge pool, shaded daybed cabana, outdoor open-air rain shower, and comprehensive in-villa dining amenities.',
     guests: 4,
     bedType: '2 Beds',
+    size: '85 m²',
     pricePerNight: 320,
-    imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+    ],
+    keyAmenities: ['85 m²', 'Private Plunge Pool', 'Outdoor Lounge', 'Dedicated Host'],
+    amenities: [
+      'Private Temperature-Controlled Plunge Pool',
+      'Expansive Teak Sun Deck with Lounge Daybeds',
+      'Open-Air Outdoor Tropical Rain Shower',
+      'Dedicated Villa Host Concierge Service',
+      'Full Kitchenette with Wine Refrigerator',
+      'Dual Master Suites with Plush King Beds',
+      'High-Speed Wi-Fi Across Villa & Garden',
+      '75-inch Home Cinema Smart Display',
+      'Complimentary In-Villa Breakfast Setup',
+      'Private Airport Luxury Car Transfer',
+    ],
+    highlights: [
+      'Total walled privacy with tropical flora',
+      'Private temperature-controlled pool',
+      'Shaded poolside dining gazebo',
+      'Complimentary signature in-villa massage',
+    ],
+    cancellationPolicy: 'Free cancellation up to 72 hours prior to check-in. Non-refundable within 72 hours. Portfolio demonstration policy.',
     featured: true,
   },
   {
@@ -144,14 +238,72 @@ export const SAMPLE_ROOMS: RoomItem[] = [
     title: 'Family Suite',
     category: 'Suite',
     tagline: 'Expansive interconnected quarters designed for family harmony',
-    description: 'A spacious family-friendly suite with flexible sleeping arrangements and a comfortable sitting area.',
+    description: 'A spacious family-friendly suite with flexible sleeping arrangements, modern entertainment, and comfortable sitting area.',
+    fullDescription:
+      'Engineered specifically with family comfort and peace of mind in mind, the Family Suite features generous space that seamlessly accommodates up to five guests. Featuring flexible sleeping configurations, two private full bathrooms, child-safe design touches, and a central living parlor for games and movie evenings, it is the ultimate family sanctuary.',
     guests: 5,
     bedType: '2 Beds',
+    size: '60 m²',
     pricePerNight: 250,
-    imageUrl: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1590490359683-658d3d23f972?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
+    ],
+    keyAmenities: ['60 m²', 'Dual Bathrooms', 'Family Living Room', 'Child-Friendly'],
+    amenities: [
+      'Dual Full Bathrooms with Tub and Rain Shower',
+      'Two Separate Interconnected Sleeping Quarters',
+      'Spacious Central Family Living Room',
+      'Complimentary Baby Cribs or Rollaway Beds on Request',
+      'Child-Friendly Safety Proofing & Corner Guards',
+      'Board Games, Books, and Smart Streaming Apps',
+      'High-Speed Wi-Fi for Multiple Family Devices',
+      'Microwave, Mini Fridge, and Dining Corner',
+      'Kids Welcome Kit & Bath Amenities',
+      'Connecting Balcony with Child-Safe Railings',
+    ],
+    highlights: [
+      'Two full bathrooms eliminate morning waiting',
+      'Flexible bed arrangements for adults and kids',
+      'Central parlor for relaxing together',
+      'Complimentary daily family beach cabana',
+    ],
+    cancellationPolicy: 'Free cancellation up to 48 hours prior to check-in. Non-refundable within 48 hours. Portfolio demonstration policy.',
     featured: true,
   },
 ];
+
+// Helper to look up a room by id
+export const getRoomById = (id?: string): RoomItem | undefined => {
+  if (!id) return undefined;
+  return SAMPLE_ROOMS.find((room) => room.id === id);
+};
+
+// Demo Booking Interface
+export interface DemoBooking {
+  bookingReference: string;
+  roomId: string;
+  roomTitle: string;
+  roomCategory: string;
+  pricePerNight: number;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  roomsCount: number;
+  adults: number;
+  children: number;
+  totalEstimatedPrice: number;
+  guestName: string;
+  guestEmail: string;
+  guestPhone?: string;
+  specialRequests?: string;
+  createdAt: string;
+  status: 'Pending Confirmation';
+}
+
 
 // Compatibility alias
 export type RoomFoundation = RoomItem;
