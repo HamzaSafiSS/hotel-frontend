@@ -1,15 +1,10 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  Calendar,
-  Users,
-  BedDouble,
   SlidersHorizontal,
   RotateCcw,
   Sparkles,
   ChevronRight,
-  AlertCircle,
-  Search,
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { RoomCard } from '../components/ui/RoomCard';
@@ -17,79 +12,11 @@ import { SAMPLE_ROOMS } from '../data/siteData';
 import type { RoomItem } from '../data/siteData';
 
 export const Rooms: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // Helper for default dates
-  const getFutureDate = (daysAhead: number) => {
-    const d = new Date();
-    d.setDate(d.getDate() + daysAhead);
-    return d.toISOString().split('T')[0];
-  };
-
-  // Search Criteria State (prefilled from URL query params if present)
-  const [checkIn, setCheckIn] = useState<string>(
-    () => searchParams.get('checkIn') || getFutureDate(1)
-  );
-  const [checkOut, setCheckOut] = useState<string>(
-    () => searchParams.get('checkOut') || getFutureDate(4)
-  );
-  const [adults, setAdults] = useState<number>(() =>
-    Number(searchParams.get('adults')) || 2
-  );
-  const [children, setChildren] = useState<number>(() =>
-    Number(searchParams.get('children')) || 0
-  );
-  const [roomsCount, setRoomsCount] = useState<number>(() =>
-    Number(searchParams.get('rooms')) || 1
-  );
-  const [dateError, setDateError] = useState<string>('');
-
-  // Filter & Sorting State
+  // Filter & Sorting State (Category, Max Price, Minimum Capacity, Sort)
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [maxPrice, setMaxPrice] = useState<number>(350);
   const [minCapacity, setMinCapacity] = useState<number>(1);
   const [sortBy, setSortBy] = useState<'recommended' | 'price-asc' | 'price-desc'>('recommended');
-
-  // Keep state in sync with URL searchParams changes
-  useEffect(() => {
-    const urlCheckIn = searchParams.get('checkIn');
-    const urlCheckOut = searchParams.get('checkOut');
-    const urlAdults = searchParams.get('adults');
-    const urlChildren = searchParams.get('children');
-    const urlRooms = searchParams.get('rooms');
-
-    if (urlCheckIn) setCheckIn(urlCheckIn);
-    if (urlCheckOut) setCheckOut(urlCheckOut);
-    if (urlAdults) setAdults(Number(urlAdults));
-    if (urlChildren) setChildren(Number(urlChildren));
-    if (urlRooms) setRoomsCount(Number(urlRooms));
-  }, [searchParams]);
-
-  // Handle Search Submission
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!checkIn || !checkOut) {
-      setDateError('Please select both check-in and check-out dates.');
-      return;
-    }
-
-    if (new Date(checkOut) <= new Date(checkIn)) {
-      setDateError('Check-out date must be after check-in date.');
-      return;
-    }
-
-    setDateError('');
-
-    // Update URL query parameters
-    setSearchParams({
-      checkIn,
-      checkOut,
-      adults: adults.toString(),
-      children: children.toString(),
-      rooms: roomsCount.toString(),
-    });
-  };
 
   // Reset Filters
   const handleResetFilters = () => {
@@ -97,17 +24,13 @@ export const Rooms: React.FC = () => {
     setMaxPrice(350);
     setMinCapacity(1);
     setSortBy('recommended');
-    setDateError('');
   };
 
   // Filtered and Sorted Rooms Calculation
-  const totalGuests = adults + children;
-
   const filteredRooms = useMemo(() => {
     return SAMPLE_ROOMS.filter((room: RoomItem) => {
-      // 1. Capacity restriction: room must accommodate searched guests and selected capacity
-      const requiredCapacity = Math.max(totalGuests, minCapacity);
-      if (room.guests < requiredCapacity) {
+      // 1. Capacity filter
+      if (room.guests < minCapacity) {
         return false;
       }
 
@@ -131,12 +54,7 @@ export const Rooms: React.FC = () => {
       }
       return 0; // recommended
     });
-  }, [totalGuests, minCapacity, selectedCategory, maxPrice, sortBy]);
-
-  // Construct query string for booking link propagation
-  const bookingQuery = `checkIn=${encodeURIComponent(checkIn)}&checkOut=${encodeURIComponent(
-    checkOut
-  )}&adults=${adults}&children=${children}&rooms=${roomsCount}`;
+  }, [minCapacity, selectedCategory, maxPrice, sortBy]);
 
   return (
     <div className="flex-1 flex flex-col bg-white">
@@ -175,162 +93,11 @@ export const Rooms: React.FC = () => {
         </ContentContainer>
       </section>
 
-      {/* B. Search Panel & Filter Controls */}
+      {/* B. Catalog Filter Controls */}
       <section className="bg-[#EAF2FF]/40 border-b border-[#D8E0EA] py-6">
         <ContentContainer size="7xl">
-          {/* 1. Quick Search Bar */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="bg-white border border-[#D8E0EA] rounded-xl p-4 sm:p-5 shadow-xs mb-6"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 items-end">
-              {/* Check In */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="rooms-check-in"
-                  className="text-[11px] font-bold uppercase tracking-wider text-[#062B45] flex items-center gap-1.5"
-                >
-                  <Calendar className="w-3.5 h-3.5 text-[#C7A66B]" />
-                  <span>Check In</span>
-                </label>
-                <input
-                  id="rooms-check-in"
-                  type="date"
-                  value={checkIn}
-                  onChange={(e) => {
-                    setCheckIn(e.target.value);
-                    if (new Date(e.target.value) >= new Date(checkOut)) {
-                      setDateError('Check-out date must be after check-in date.');
-                    } else {
-                      setDateError('');
-                    }
-                  }}
-                  className="w-full bg-[#EAF2FF]/30 border border-[#D8E0EA] rounded-lg px-3 py-2 text-xs sm:text-sm font-medium text-[#18324A] outline-none focus:border-[#062B45] focus:ring-1 focus:ring-[#062B45]"
-                  required
-                />
-              </div>
-
-              {/* Check Out */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="rooms-check-out"
-                  className="text-[11px] font-bold uppercase tracking-wider text-[#062B45] flex items-center gap-1.5"
-                >
-                  <Calendar className="w-3.5 h-3.5 text-[#C7A66B]" />
-                  <span>Check Out</span>
-                </label>
-                <input
-                  id="rooms-check-out"
-                  type="date"
-                  value={checkOut}
-                  onChange={(e) => {
-                    setCheckOut(e.target.value);
-                    if (new Date(checkIn) >= new Date(e.target.value)) {
-                      setDateError('Check-out date must be after check-in date.');
-                    } else {
-                      setDateError('');
-                    }
-                  }}
-                  className="w-full bg-[#EAF2FF]/30 border border-[#D8E0EA] rounded-lg px-3 py-2 text-xs sm:text-sm font-medium text-[#18324A] outline-none focus:border-[#062B45] focus:ring-1 focus:ring-[#062B45]"
-                  required
-                />
-              </div>
-
-              {/* Adults */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="rooms-adults"
-                  className="text-[11px] font-bold uppercase tracking-wider text-[#062B45] flex items-center gap-1.5"
-                >
-                  <Users className="w-3.5 h-3.5 text-[#C7A66B]" />
-                  <span>Adults</span>
-                </label>
-                <select
-                  id="rooms-adults"
-                  value={adults}
-                  onChange={(e) => setAdults(Number(e.target.value))}
-                  className="w-full bg-[#EAF2FF]/30 border border-[#D8E0EA] rounded-lg px-3 py-2 text-xs sm:text-sm font-medium text-[#18324A] outline-none cursor-pointer focus:border-[#062B45]"
-                >
-                  {[1, 2, 3, 4, 5, 6].map((n) => (
-                    <option key={n} value={n}>
-                      {n} {n === 1 ? 'Adult' : 'Adults'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Children */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="rooms-children"
-                  className="text-[11px] font-bold uppercase tracking-wider text-[#062B45] flex items-center gap-1.5"
-                >
-                  <Users className="w-3.5 h-3.5 text-[#C7A66B]" />
-                  <span>Children</span>
-                </label>
-                <select
-                  id="rooms-children"
-                  value={children}
-                  onChange={(e) => setChildren(Number(e.target.value))}
-                  className="w-full bg-[#EAF2FF]/30 border border-[#D8E0EA] rounded-lg px-3 py-2 text-xs sm:text-sm font-medium text-[#18324A] outline-none cursor-pointer focus:border-[#062B45]"
-                >
-                  {[0, 1, 2, 3, 4].map((n) => (
-                    <option key={n} value={n}>
-                      {n} {n === 1 ? 'Child' : 'Children'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Rooms */}
-              <div className="flex flex-col gap-1">
-                <label
-                  htmlFor="rooms-count"
-                  className="text-[11px] font-bold uppercase tracking-wider text-[#062B45] flex items-center gap-1.5"
-                >
-                  <BedDouble className="w-3.5 h-3.5 text-[#C7A66B]" />
-                  <span>Rooms</span>
-                </label>
-                <select
-                  id="rooms-count"
-                  value={roomsCount}
-                  onChange={(e) => setRoomsCount(Number(e.target.value))}
-                  className="w-full bg-[#EAF2FF]/30 border border-[#D8E0EA] rounded-lg px-3 py-2 text-xs sm:text-sm font-medium text-[#18324A] outline-none cursor-pointer focus:border-[#062B45]"
-                >
-                  {[1, 2, 3, 4].map((n) => (
-                    <option key={n} value={n}>
-                      {n} {n === 1 ? 'Room' : 'Rooms'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Search Submit */}
-              <div>
-                <button
-                  type="submit"
-                  className="w-full h-[38px] bg-[#062B45] hover:bg-[#0A3D60] active:bg-[#041D2F] text-white font-medium text-xs sm:text-sm rounded-lg px-4 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C7A66B]"
-                >
-                  <Search className="w-3.5 h-3.5" />
-                  <span>Update Dates</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Validation Error */}
-            {dateError && (
-              <div
-                role="alert"
-                className="mt-3 flex items-center gap-2 p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium"
-              >
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-                <span>{dateError}</span>
-              </div>
-            )}
-          </form>
-
-          {/* 2. Secondary Filter Bar: Category, Max Price, Capacity, Sort & Reset */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-white border border-[#D8E0EA] rounded-xl p-3 sm:p-4">
+          {/* Filter Bar: Category, Max Price, Capacity, Sort & Reset */}
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-white border border-[#D8E0EA] rounded-xl p-3 sm:p-4 shadow-xs">
             {/* Category Filter Pills */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-semibold text-[#60758B] mr-1 hidden sm:inline-flex items-center gap-1">
@@ -435,8 +202,7 @@ export const Rooms: React.FC = () => {
                 Available Accommodations ({filteredRooms.length})
               </h2>
               <p className="text-xs text-[#60758B] mt-1">
-                Showing rooms available for {totalGuests} {totalGuests === 1 ? 'Guest' : 'Guests'} • {roomsCount}{' '}
-                {roomsCount === 1 ? 'Room' : 'Rooms'}
+                Showing luxury rooms, suites, and private villas crafted for ultimate comfort
               </p>
             </div>
 
@@ -462,8 +228,8 @@ export const Rooms: React.FC = () => {
                   keyAmenities={room.keyAmenities}
                   pricePerNight={room.pricePerNight}
                   imageUrl={room.imageUrl}
-                  detailsUrl={`/rooms/${room.id}?${bookingQuery}`}
-                  bookUrl={`/booking?roomId=${room.id}&${bookingQuery}`}
+                  detailsUrl={`/rooms/${room.id}`}
+                  bookUrl={`/booking?roomId=${room.id}`}
                 />
               ))}
             </div>
@@ -477,8 +243,8 @@ export const Rooms: React.FC = () => {
                 No Rooms Match Your Criteria
               </h3>
               <p className="text-xs sm:text-sm text-[#60758B] leading-relaxed mb-6">
-                None of our suites or villas can accommodate {totalGuests} guests with your active filters.
-                Try adjusting your dates, guest count, maximum price range, or clearing current filters.
+                None of our suites or villas match your active filters.
+                Try adjusting your category, guest capacity, maximum price range, or clearing current filters.
               </p>
               <button
                 type="button"

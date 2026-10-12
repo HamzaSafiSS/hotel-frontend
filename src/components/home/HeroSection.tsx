@@ -2,11 +2,9 @@ import React from 'react';
 import { ArrowRight, Utensils } from 'lucide-react';
 import { ContentContainer } from '../ui/ContentContainer';
 import { Button } from '../ui/Button';
-import { QuickSearchPanel } from './QuickSearchPanel';
-
 export const HeroSection: React.FC = () => {
   return (
-    <section className="relative min-h-[92vh] flex flex-col justify-between pt-16 pb-12 lg:pt-24 lg:pb-16 overflow-hidden">
+    <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center py-20 lg:py-28 overflow-hidden">
       {/* Background Image with High-End Resort Photography */}
       <div className="absolute inset-0 z-0">
         <img
@@ -21,7 +19,7 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="relative z-10 my-auto">
+      <div className="relative z-10 my-auto w-full">
         <ContentContainer size="7xl">
           <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
             {/* Eyebrow */}
@@ -64,11 +62,6 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
         </ContentContainer>
-      </div>
-
-      {/* Quick Search Panel Positioned at the Base of the Hero */}
-      <div className="relative z-20 mt-8 sm:mt-12 px-4 sm:px-6 lg:px-8">
-        <QuickSearchPanel />
       </div>
     </section>
   );
