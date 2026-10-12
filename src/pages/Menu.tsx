@@ -7,8 +7,7 @@ export const Menu: React.FC = () => {
       title="Digital Culinary Menu"
       eyebrow="Dining Selection"
       subtitle="DIGITAL MENU"
-      description="Browse our seasonal breakfast, all-day dining, sunset cocktail, and in-room dining menus with dietary indicators and curated wine pairings. The complete digital menu browser will be developed in an upcoming phase."
-      upcomingPhase="Phase 2 / Phase 3"
+      description="Browse our seasonal breakfast, all-day dining, sunset cocktail, and in-room dining menus featuring fresh coastal catches, pasture-raised selections, and organic estate pairings."
       suggestedLinks={[
         { label: 'Dining Overview', path: '/dining' },
         { label: 'Book a Room', path: '/booking' },

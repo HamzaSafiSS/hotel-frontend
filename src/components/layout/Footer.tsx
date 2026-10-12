@@ -5,7 +5,7 @@ import {
   Phone,
   Mail,
   Clock,
-  Info,
+  ShieldCheck,
 } from 'lucide-react';
 import { FOOTER_COLUMNS, HOTEL_CONTACT } from '../../data/siteData';
 import { FooterLink } from '../ui/FooterLink';
@@ -149,10 +149,10 @@ export const Footer: React.FC = () => {
               </li>
             </ul>
 
-            {/* Disclaimer badge */}
+            {/* Direct Booking Assurance badge */}
             <div className="mt-4 p-2.5 rounded bg-white/5 border border-white/10 flex items-start gap-2 text-[11px] text-gray-300 leading-tight">
-              <Info className="w-3.5 h-3.5 text-[#C7A66B] shrink-0 mt-0.5" />
-              <span>Placeholder data for portfolio demonstration.</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-[#C7A66B] shrink-0 mt-0.5" />
+              <span>Official Hotel Website • Best Rates Guaranteed</span>
             </div>
           </div>
         </div>

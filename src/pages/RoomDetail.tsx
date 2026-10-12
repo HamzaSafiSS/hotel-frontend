@@ -106,7 +106,7 @@ export const RoomDetail: React.FC = () => {
               Room Not Found
             </h1>
             <p className="text-sm text-[#60758B] max-w-md mx-auto mb-8">
-              We couldn't find the requested accommodation suite. It may have been relocated or does not exist in our sample catalog.
+              We couldn't find the requested accommodation suite. It may have been updated or is currently unavailable.
             </p>
             <Button to="/rooms" variant="primary" icon={<ArrowLeft className="w-4 h-4" />} iconPosition="left">
               Return to Rooms & Suites
@@ -445,11 +445,11 @@ export const RoomDetail: React.FC = () => {
                       <span>${estimatedTotal}</span>
                     </div>
                     <div className="flex items-center justify-between text-[#60758B]">
-                      <span>Sample Resort Taxes & Fees</span>
-                      <span className="text-[#C7A66B] font-medium">Excluded in Demo</span>
+                      <span>Taxes & Resort Fees</span>
+                      <span className="text-[#60758B] font-medium">Calculated at Check-in</span>
                     </div>
                     <div className="flex items-center justify-between text-base font-bold text-[#18324A] pt-2 border-t border-[#D8E0EA]">
-                      <span>Estimated Subtotal</span>
+                      <span>Estimated Total</span>
                       <span className="text-xl text-[#062B45] font-sans">${estimatedTotal}</span>
                     </div>
                   </div>
@@ -460,11 +460,11 @@ export const RoomDetail: React.FC = () => {
                     className="w-full mt-3 bg-[#062B45] hover:bg-[#0A3D60] active:bg-[#041D2F] text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C7A66B]"
                   >
                     <CalendarCheck className="w-4 h-4 text-[#C7A66B]" />
-                    <span>Book This Room</span>
+                    <span>Reserve Accommodation</span>
                   </button>
 
                   <p className="text-center text-[11px] text-[#60758B] mt-1">
-                    No charge is incurred. You will proceed to the demo booking form.
+                    Best Rate Guarantee • Instant Booking Confirmation
                   </p>
                 </form>
               </div>

@@ -7,8 +7,7 @@ export const Terms: React.FC = () => {
       title="Terms & Conditions"
       eyebrow="Terms of Service"
       subtitle="LEGAL & POLICIES"
-      description="Review our booking policies, cancellation guidelines, resort regulations, and website usage terms. The comprehensive terms document will be published in a future phase."
-      upcomingPhase="Phase 2 / Phase 3"
+      description="Review our guest booking policies, check-in arrival requirements, cancellation terms, and general resort guidelines for your stay at Skyview Hotels & Resorts."
     />
   );
 };

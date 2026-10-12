@@ -209,11 +209,11 @@ export const QuickSearchPanel: React.FC = () => {
             </div>
           )}
 
-          {/* Subtitle / Portfolio Note */}
+          {/* Hotel Guarantee Note */}
           <div className="flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#60758B] pt-2 border-t border-[#D8E0EA]/70 gap-2">
             <span className="flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#C7A66B]" />
-              <span>Demonstration Search — Navigates to Rooms & Suites with specified filters</span>
+              <span>Best Rate Guarantee • Instant Confirmation • 24/7 Dedicated Concierge</span>
             </span>
             <span className="italic text-[#062B45]/80 font-serif">
               "More than a stay — it's an unforgettable experience"

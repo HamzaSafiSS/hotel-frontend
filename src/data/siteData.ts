@@ -73,11 +73,11 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
 ];
 
 export const HOTEL_CONTACT: HotelContactInfo = {
-  address: '[Hotel Address] 124 Scenic Coastal Boulevard, Azure Haven, CA 90210',
-  phone: '[Hotel Phone Number] +1 (800) 555-SKYVIEW / +1 (800) 555-7598',
-  email: '[Hotel Email Address] reservations@skyviewhotels.com',
-  receptionHours: '[Reception Hours] 24/7 Front Desk & Dedicated Concierge',
-  disclaimer: 'Note: These contact details are sample placeholders for portfolio demonstration purposes and do not represent verified real-world operational contacts.',
+  address: '124 Scenic Coastal Boulevard, Azure Haven, CA 90210',
+  phone: '+1 (800) 555-7598',
+  email: 'reservations@skyviewhotels.com',
+  receptionHours: '24/7 Front Desk & Dedicated Concierge',
+  disclaimer: 'Skyview Hotels & Resorts guarantees our Best Available Rate for all direct reservations made on this website.',
 };
 
 export const SOCIAL_LINKS: SocialLink[] = [
@@ -148,7 +148,7 @@ export const SAMPLE_ROOMS: RoomItem[] = [
       'Bespoke plush bathrobe and slippers',
       'Convenient high-speed bedside USB charging',
     ],
-    cancellationPolicy: 'Free cancellation up to 48 hours prior to check-in. Non-refundable within 48 hours. Portfolio demonstration policy.',
+    cancellationPolicy: 'Complimentary cancellation up to 48 hours prior to arrival. Cancellations made within 48 hours will be charged for the first night room rate.',
     featured: true,
   },
   {
@@ -189,7 +189,7 @@ export const SAMPLE_ROOMS: RoomItem[] = [
       'Spacious double vanity marble counter',
       'Complimentary sunset cocktail service',
     ],
-    cancellationPolicy: 'Free cancellation up to 48 hours prior to check-in. Non-refundable within 48 hours. Portfolio demonstration policy.',
+    cancellationPolicy: 'Complimentary cancellation up to 48 hours prior to arrival. Cancellations made within 48 hours will be charged for the first night room rate.',
     featured: true,
   },
   {
@@ -230,7 +230,7 @@ export const SAMPLE_ROOMS: RoomItem[] = [
       'Shaded poolside dining gazebo',
       'Complimentary signature in-villa massage',
     ],
-    cancellationPolicy: 'Free cancellation up to 72 hours prior to check-in. Non-refundable within 72 hours. Portfolio demonstration policy.',
+    cancellationPolicy: 'Complimentary cancellation up to 72 hours prior to scheduled arrival. Cancellations within 72 hours will be charged 50% of the scheduled reservation.',
     featured: true,
   },
   {
@@ -271,7 +271,7 @@ export const SAMPLE_ROOMS: RoomItem[] = [
       'Central parlor for relaxing together',
       'Complimentary daily family beach cabana',
     ],
-    cancellationPolicy: 'Free cancellation up to 48 hours prior to check-in. Non-refundable within 48 hours. Portfolio demonstration policy.',
+    cancellationPolicy: 'Complimentary cancellation up to 48 hours prior to arrival. Cancellations made within 48 hours will be charged for the first night room rate.',
     featured: true,
   },
 ];

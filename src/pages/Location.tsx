@@ -7,8 +7,7 @@ export const Location: React.FC = () => {
       title="Location & Directions"
       eyebrow="Arriving in Paradise"
       subtitle="MAP & TRAVEL GUIDE"
-      description="Skyview Hotels & Resorts is nestled along the scenic coastal bay. Detailed interactive maps, driving routes, helipad coordinates, and airport concierge transfer options will be developed in an upcoming phase."
-      upcomingPhase="Phase 2 / Phase 3"
+      description="Skyview Hotels & Resorts is nestled along the scenic coastal cliffs of Azure Haven. Accessible via picturesque coastal highways, regional airports, and private chauffeured transfers."
       suggestedLinks={[
         { label: 'Contact Us', path: '/contact' },
         { label: 'Explore Rooms', path: '/rooms' },

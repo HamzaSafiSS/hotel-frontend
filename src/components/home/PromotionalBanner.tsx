@@ -33,7 +33,7 @@ export const PromotionalBanner: React.FC = () => {
 
           {/* Description */}
           <p className="text-sm sm:text-base md:text-lg text-gray-200 leading-relaxed font-light mb-8 max-w-2xl">
-            Explore our sample room options and discover a stay designed around comfort and relaxation.
+            Explore our curated suites and discover an oceanfront retreat designed around sublime comfort and relaxation.
           </p>
 
           {/* CTA Button */}
@@ -47,8 +47,8 @@ export const PromotionalBanner: React.FC = () => {
             >
               Explore Available Rooms
             </Button>
-            <span className="text-xs text-gray-300 italic">
-              Illustrative portfolio promotional showcase
+            <span className="text-xs text-[#DFCA9B] font-medium tracking-wide">
+              Seasonal packages & special member privileges
             </span>
           </div>
         </div>

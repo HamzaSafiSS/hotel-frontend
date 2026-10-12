@@ -105,11 +105,9 @@ export const Rooms: React.FC = () => {
 
   const filteredRooms = useMemo(() => {
     return SAMPLE_ROOMS.filter((room: RoomItem) => {
-      // 1. Capacity restriction: room must accommodate adults + children
-      if (room.guests < totalGuests && minCapacity <= 1) {
-        return false;
-      }
-      if (minCapacity > 1 && room.guests < minCapacity) {
+      // 1. Capacity restriction: room must accommodate searched guests and selected capacity
+      const requiredCapacity = Math.max(totalGuests, minCapacity);
+      if (room.guests < requiredCapacity) {
         return false;
       }
 
@@ -378,6 +376,23 @@ export const Rooms: React.FC = () => {
                 <span className="font-semibold text-[#062B45] min-w-[42px]">${maxPrice}</span>
               </div>
 
+              {/* Guest Capacity Filter */}
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-[#60758B] hidden sm:inline">Capacity:</span>
+                <select
+                  value={minCapacity}
+                  onChange={(e) => setMinCapacity(Number(e.target.value))}
+                  className="bg-gray-100 border border-[#D8E0EA] rounded-md px-2.5 py-1.5 text-xs font-medium text-[#18324A] outline-none cursor-pointer"
+                  aria-label="Filter by minimum guest capacity"
+                >
+                  <option value={1}>Any Guests</option>
+                  <option value={2}>2+ Guests</option>
+                  <option value={3}>3+ Guests</option>
+                  <option value={4}>4+ Guests</option>
+                  <option value={5}>5+ Guests</option>
+                </select>
+              </div>
+
               {/* Sort By */}
               <div className="flex items-center gap-1.5 text-xs">
                 <span className="text-[#60758B] hidden sm:inline">Sort:</span>
@@ -427,7 +442,7 @@ export const Rooms: React.FC = () => {
 
             <span className="inline-flex items-center gap-1.5 text-xs text-[#60758B] bg-gray-50 border border-[#D8E0EA] px-3 py-1 rounded-full">
               <Sparkles className="w-3.5 h-3.5 text-[#C7A66B]" />
-              <span>Illustrative sample rates & demo availability</span>
+              <span>Best Available Rates Guaranteed</span>
             </span>
           </div>
 
@@ -462,8 +477,8 @@ export const Rooms: React.FC = () => {
                 No Rooms Match Your Criteria
               </h3>
               <p className="text-xs sm:text-sm text-[#60758B] leading-relaxed mb-6">
-                None of our sample suites can accommodate {totalGuests} guests with your active price/category filters.
-                Try reducing guest count, adjusting the maximum price slider, or resetting filters.
+                None of our suites or villas can accommodate {totalGuests} guests with your active filters.
+                Try adjusting your dates, guest count, maximum price range, or clearing current filters.
               </p>
               <button
                 type="button"

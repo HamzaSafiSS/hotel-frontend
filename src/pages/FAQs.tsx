@@ -7,8 +7,7 @@ export const FAQs: React.FC = () => {
       title="Frequently Asked Questions"
       eyebrow="Help & Information"
       subtitle="FAQS"
-      description="Find answers to common guest inquiries regarding check-in times, airport transfers, cancellation policies, pet regulations, and resort accessibility. The searchable FAQ accordion will be developed in an upcoming phase."
-      upcomingPhase="Phase 2 / Phase 3"
+      description="Find answers to guest inquiries regarding check-in arrivals, valet parking, private airport transfers, dining reservations, and resort privileges."
       suggestedLinks={[
         { label: 'Location & Directions', path: '/location' },
         { label: 'Contact Us', path: '/contact' },

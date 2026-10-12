@@ -35,11 +35,11 @@ export const ExperiencesSection: React.FC = () => {
                   Wake up to panoramic ocean views, stroll private golden sands, and indulge in secluded coastal serenity tucked between dramatic cliffs and crystalline waters.
                 </p>
 
-                {/* Clearly Labeled Placeholder Destination */}
+                {/* Destination Location Badge */}
                 <div className="inline-flex items-center gap-2 p-2.5 rounded-lg bg-white/10 border border-white/15 text-xs text-gray-200 mb-6">
                   <MapPin className="w-4 h-4 text-[#C7A66B] shrink-0" />
                   <span>
-                    <strong>[Sample Destination]</strong> Azure Bay Sanctuary • Scenic Coastline
+                    <strong>Azure Bay Sanctuary</strong> • Scenic Coastal Reserve
                   </span>
                 </div>
               </div>

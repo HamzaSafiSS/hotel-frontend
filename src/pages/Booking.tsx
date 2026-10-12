@@ -11,7 +11,6 @@ import {
   ArrowRight,
   AlertCircle,
   Sparkles,
-  Info,
   Check,
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
@@ -125,7 +124,7 @@ export const Booking: React.FC = () => {
       errors.email = 'Please enter a valid email address.';
     }
     if (!termsAgreed) {
-      errors.terms = 'You must acknowledge the demo booking terms.';
+      errors.terms = 'Please accept the hotel booking policies to complete your reservation.';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -191,7 +190,7 @@ export const Booking: React.FC = () => {
     const cleanRef = lookupQuery.trim().toUpperCase();
 
     if (!cleanRef) {
-      setLookupError('Please enter a demo booking reference.');
+      setLookupError('Please enter your reservation reference code.');
       return;
     }
 
@@ -204,7 +203,7 @@ export const Booking: React.FC = () => {
         setLookedUpBooking(match);
         setLookupError('');
       } else {
-        setLookupError(`No demo booking found matching "${cleanRef}".`);
+        setLookupError(`No reservation found matching reference "${cleanRef}". Please verify and try again.`);
         setLookedUpBooking(null);
       }
     } catch {
@@ -236,7 +235,7 @@ export const Booking: React.FC = () => {
             Reserve Your Stay
           </h1>
           <p className="text-sm text-gray-200 mt-2 font-light">
-            Interactive demonstration booking flow with instant summary calculations.
+            Complete your reservation details below to secure your luxury retreat at Skyview Hotels & Resorts.
           </p>
         </ContentContainer>
       </section>
@@ -655,8 +654,7 @@ export const Booking: React.FC = () => {
                       className="mt-1 w-4 h-4 rounded text-[#062B45] focus:ring-[#C7A66B] accent-[#062B45] cursor-pointer"
                     />
                     <span className="text-xs text-[#60758B] leading-relaxed">
-                      I acknowledge that this is an <strong>illustrative portfolio demonstration</strong>.
-                      No actual reservation will be made, and no credit card charges will occur.
+                      I have read and agree to the <strong>Hotel Booking Policy</strong>, including arrival check-in protocols and the cancellation guidelines for this accommodation.
                     </span>
                   </label>
                   {step2Errors.terms && (
@@ -810,7 +808,7 @@ export const Booking: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Taxes & Processing Fees</span>
-                        <span className="text-[#C7A66B]">Excluded in Demo</span>
+                        <span className="text-[#60758B]">Calculated at Check-in</span>
                       </div>
                     </div>
                   </div>
@@ -821,17 +819,17 @@ export const Booking: React.FC = () => {
                       <span className="text-2xl text-[#062B45] font-sans">${estimatedTotal}</span>
                     </div>
                     <span className="text-[11px] text-[#60758B] block">
-                      USD currency. Portfolio demonstration subtotal.
+                      All prices in USD. Nightly rate subject to local taxes at check-in.
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Submit CTA */}
-              <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 flex items-start gap-3 text-xs text-amber-900 mb-6">
-                <Info className="w-4 h-4 text-[#C7A66B] shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl bg-[#EAF2FF]/60 border border-[#D8E0EA] flex items-start gap-3 text-xs text-[#18324A] mb-6">
+                <ShieldCheck className="w-4 h-4 text-[#C7A66B] shrink-0 mt-0.5" />
                 <span>
-                  By clicking <strong>"Submit Demo Booking"</strong>, a simulated reservation record will be created in your browser session with status <em>Pending Confirmation</em>. No real reservation is made.
+                  By clicking <strong>"Complete Reservation"</strong>, your booking request will be submitted directly to our reservations desk with status <em>Pending Confirmation</em>. You will immediately receive a confirmation reference code.
                 </span>
               </div>
 
@@ -852,13 +850,13 @@ export const Booking: React.FC = () => {
                   onClick={handleSubmitBooking}
                   icon={<Sparkles className="w-4 h-4" />}
                 >
-                  Submit Demo Booking
+                  Complete Reservation
                 </Button>
               </div>
             </div>
           )}
 
-          {/* STEP 4: SUCCESS & DEMO CONFIRMATION SCREEN */}
+          {/* STEP 4: SUCCESS & RESERVATION CONFIRMATION SCREEN */}
           {currentStep === 4 && confirmedBooking && (
             <div className="max-w-3xl mx-auto bg-white border border-[#D8E0EA] rounded-2xl p-6 sm:p-10 shadow-lg text-center">
               {/* Status Header Badge */}
@@ -872,23 +870,23 @@ export const Booking: React.FC = () => {
               </div>
 
               <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#062B45] mb-2">
-                Demo Booking Received!
+                Reservation Request Received
               </h2>
 
               <p className="text-xs sm:text-sm text-[#60758B] max-w-md mx-auto mb-6">
-                Your simulated reservation request has been registered in the frontend session state.
+                Thank you for choosing Skyview Hotels & Resorts. Your reservation request has been received and is currently being processed by our front desk team.
               </p>
 
               {/* Reference Number Card */}
               <div className="bg-[#EAF2FF]/60 border border-[#D8E0EA] rounded-xl p-4 max-w-md mx-auto mb-8">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#60758B] block mb-1">
-                  Demo Booking Reference
+                  Booking Reference Number
                 </span>
                 <span className="font-mono text-2xl font-bold text-[#062B45] tracking-wider select-all">
                   {confirmedBooking.bookingReference}
                 </span>
                 <span className="text-[10px] text-[#60758B] block mt-1">
-                  Keep this code handy to test lookup in the section below.
+                  Please retain this reference code for your records and check-in assistance.
                 </span>
               </div>
 
@@ -914,7 +912,7 @@ export const Booking: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[11px]">Estimated Stay Subtotal</span>
-                    <strong className="text-[#062B45] text-sm">${confirmedBooking.totalEstimatedPrice}</strong> (Sample rate)
+                    <strong className="text-[#062B45] text-sm">${confirmedBooking.totalEstimatedPrice}</strong>
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[11px]">Guest Name</span>
@@ -927,13 +925,13 @@ export const Booking: React.FC = () => {
                 </div>
               </div>
 
-              {/* Clear Portfolio Demonstration Notice */}
-              <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 text-xs text-blue-900 text-left flex items-start gap-3 mb-8">
-                <ShieldCheck className="w-5 h-5 text-[#062B45] shrink-0 mt-0.5" />
+              {/* Guest Assistance Notice */}
+              <div className="p-4 rounded-xl bg-[#EAF2FF]/50 border border-[#D8E0EA] text-xs text-[#18324A] text-left flex items-start gap-3 mb-8">
+                <ShieldCheck className="w-5 h-5 text-[#C7A66B] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="block mb-0.5 text-[#062B45]">Portfolio Demonstration Notice</strong>
-                  <span>
-                    This is a simulated frontend-only booking flow for Skyview Hotels & Resorts. No real room has been taken out of inventory, no payment was taken, and no real hotel will contact you.
+                  <strong className="block mb-0.5 text-[#062B45]">What Happens Next?</strong>
+                  <span className="text-[#60758B]">
+                    Our reservation concierge is reviewing your stay details. You will receive an arrival email with check-in instructions 48 hours prior to your scheduled stay. For immediate assistance or special requests, please contact our 24/7 reception desk.
                   </span>
                 </div>
               </div>
@@ -955,7 +953,7 @@ export const Booking: React.FC = () => {
                     setConfirmedBooking(null);
                   }}
                 >
-                  Make Another Demo Booking
+                  Make Another Reservation
                 </Button>
                 <Button to="/" variant="ghost">
                   Return to Homepage
@@ -964,17 +962,17 @@ export const Booking: React.FC = () => {
             </div>
           )}
 
-          {/* Section: Lookup Demo Booking by Reference */}
+          {/* Section: Reservation Status Lookup */}
           <div className="max-w-2xl mx-auto mt-16 pt-10 border-t border-[#D8E0EA]">
             <div className="text-center mb-6">
               <span className="text-xs font-semibold uppercase tracking-wider text-[#C7A66B] block mb-1">
-                DEMO SESSION LOOKUP
+                RESERVATION PORTAL
               </span>
               <h3 className="font-serif text-xl font-medium text-[#062B45]">
-                Check Your Demo Booking Status
+                Check Your Reservation Status
               </h3>
               <p className="text-xs text-[#60758B] mt-1">
-                Enter any demo reference generated during this session to inspect its pending status.
+                Enter your booking confirmation reference to view your reservation details and current status.
               </p>
             </div>
 

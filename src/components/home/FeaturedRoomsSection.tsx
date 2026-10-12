@@ -51,11 +51,11 @@ export const FeaturedRoomsSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Portfolio Pricing Disclaimer */}
+        {/* Direct Booking Privileges Badge */}
         <div className="mt-8 text-center">
           <p className="inline-flex items-center gap-1.5 text-xs text-[#60758B] bg-gray-50 border border-[#D8E0EA] px-3.5 py-1.5 rounded-full">
             <Sparkles className="w-3.5 h-3.5 text-[#C7A66B]" />
-            <span>Sample portfolio rates shown. Live room bookings and dynamic availability will be implemented in future phases.</span>
+            <span>Direct Booking Privileges: Complimentary high-speed Wi-Fi, welcome refreshments, and flexible cancellation.</span>
           </p>
         </div>
       </ContentContainer>

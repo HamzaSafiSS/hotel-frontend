@@ -7,8 +7,7 @@ export const NotFound: React.FC = () => {
       title="404 — Page Not Found"
       eyebrow="Navigation"
       subtitle="ERROR 404"
-      description="The sanctuary you are looking for cannot be found or has moved. Please return to the homepage or explore our curated rooms and amenities."
-      upcomingPhase="Phase 1 Active"
+      description="The sanctuary you are looking for cannot be found or may have moved. Please return to the homepage or explore our curated rooms and amenities."
     />
   );
 };

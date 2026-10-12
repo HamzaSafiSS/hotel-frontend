@@ -120,7 +120,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                 </span>
                 <span className="text-xs text-[#60758B] ml-1">/ night</span>
               </div>
-              <span className="text-[10px] text-[#60758B]/70 block">Sample portfolio rate</span>
+              <span className="text-[10px] text-[#60758B]/70 block">Best available rate</span>
             </div>
 
             <Link
