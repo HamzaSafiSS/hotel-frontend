@@ -1,0 +1,75 @@
+import React from 'react';
+import { ArrowRight, Utensils } from 'lucide-react';
+import { ContentContainer } from '../ui/ContentContainer';
+import { Button } from '../ui/Button';
+import { QuickSearchPanel } from './QuickSearchPanel';
+
+export const HeroSection: React.FC = () => {
+  return (
+    <section className="relative min-h-[92vh] flex flex-col justify-between pt-16 pb-12 lg:pt-24 lg:pb-16 overflow-hidden">
+      {/* Background Image with High-End Resort Photography */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=2400&q=85"
+          alt="Luxury Resort Infinity Pool and Coastal Horizon"
+          className="w-full h-full object-cover object-center scale-100 transition-transform duration-1000 ease-out"
+          loading="eager"
+        />
+        {/* Multilayered Luxury Gradient Overlays for optimal readability and depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#062B45] via-[#062B45]/65 to-[#041D2F]/75" />
+        <div className="absolute inset-0 bg-radial from-transparent via-[#062B45]/40 to-[#041D2F]/80" />
+      </div>
+
+      {/* Main Content Area */}
+      <div className="relative z-10 my-auto">
+        <ContentContainer size="7xl">
+          <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
+            {/* Eyebrow */}
+            <span className="inline-block text-xs sm:text-sm font-semibold uppercase tracking-[0.25em] text-[#DFCA9B] mb-3 sm:mb-4 drop-shadow-xs">
+              LUXURY STAYS. UNFORGETTABLE JOURNEYS.
+            </span>
+
+            {/* Main Heading */}
+            <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white drop-shadow-md">
+              Your Perfect Getaway Awaits.
+            </h1>
+
+            {/* Description */}
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg text-gray-100 max-w-2xl leading-relaxed font-light drop-shadow-xs">
+              Discover exceptional comfort, thoughtful hospitality, and memorable experiences at Skyview Hotels & Resorts.
+            </p>
+
+            {/* Hero Buttons: Centered horizontally as a group, side-by-side on desktop, stacked on mobile */}
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
+              <Button
+                to="/rooms"
+                variant="gold"
+                size="lg"
+                icon={<ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />}
+                className="w-full sm:w-auto shadow-lg hover:shadow-xl font-medium tracking-wide group"
+              >
+                Explore Available Rooms
+              </Button>
+
+              <Button
+                to="/menu"
+                variant="secondary"
+                size="lg"
+                icon={<Utensils className="w-4 h-4 text-[#062B45]" />}
+                iconPosition="left"
+                className="w-full sm:w-auto bg-white/95 hover:bg-white text-[#062B45] border-white/80 shadow-lg font-medium"
+              >
+                Browse Restaurant & Menu
+              </Button>
+            </div>
+          </div>
+        </ContentContainer>
+      </div>
+
+      {/* Quick Search Panel Positioned at the Base of the Hero */}
+      <div className="relative z-20 mt-8 sm:mt-12 px-4 sm:px-6 lg:px-8">
+        <QuickSearchPanel />
+      </div>
+    </section>
+  );
+};
