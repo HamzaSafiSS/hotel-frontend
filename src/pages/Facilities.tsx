@@ -267,7 +267,7 @@ export const Facilities: React.FC = () => {
                     className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
 
                   {/* Category Pill */}
                   <div className="absolute top-4 left-4">
@@ -285,8 +285,8 @@ export const Facilities: React.FC = () => {
                   </div>
 
                   {/* Overlay Title */}
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h3 className="font-serif text-xl sm:text-2xl font-medium leading-snug">
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="font-serif text-xl sm:text-2xl font-medium leading-snug text-[#DFCA9B]">
                       {facility.title}
                     </h3>
                   </div>
