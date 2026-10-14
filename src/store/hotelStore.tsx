@@ -806,7 +806,7 @@ export const INITIAL_SETTINGS: HotelSettings = {
   contactPhone: '+1 (800) 555-7598',
   address: '124 Scenic Coastal Boulevard, Azure Haven, CA 90210',
   receptionHours: '24/7 Front Desk & Dedicated Concierge',
-  currencySymbol: '$',
+  currencySymbol: 'ETB',
   defaultCheckInTime: '3:00 PM',
   defaultCheckOutTime: '11:00 AM',
   copyrightText: '© 2026 Skyview Hotels & Resorts. All rights reserved.',
@@ -819,7 +819,13 @@ function loadFromStorage<T>(key: string, fallback: T): T {
     const raw = localStorage.getItem(key);
     if (!raw) return fallback;
     const parsed = JSON.parse(raw);
-    return parsed !== null && parsed !== undefined ? parsed : fallback;
+    if (parsed !== null && parsed !== undefined) {
+      if ((key === 'skyview_admin_settings' || key === 'skyview_hotel_settings') && (parsed.currencySymbol === '$' || !parsed.currencySymbol)) {
+        parsed.currencySymbol = 'ETB';
+      }
+      return parsed;
+    }
+    return fallback;
   } catch (e) {
     console.warn(`Failed to parse ${key} from localStorage, using fallback:`, e);
     return fallback;

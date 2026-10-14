@@ -148,7 +148,7 @@ export const Rooms: React.FC = () => {
                   className="w-20 sm:w-24 accent-[#062B45] cursor-pointer"
                   aria-label="Filter maximum price per night"
                 />
-                <span className="font-semibold text-[#062B45] min-w-[42px]">${maxPrice}</span>
+                <span className="font-semibold text-[#062B45] min-w-[42px]">ETB {maxPrice}</span>
               </div>
 
               {/* Guest Capacity Filter */}

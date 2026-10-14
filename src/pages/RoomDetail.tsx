@@ -299,7 +299,7 @@ export const RoomDetail: React.FC = () => {
                 <div className="flex items-baseline justify-between pb-5 border-b border-[#D8E0EA]">
                   <div>
                     <span className="text-3xl font-bold font-sans text-[#18324A]">
-                      ${room.pricePerNight}
+                      ETB {room.pricePerNight}
                     </span>
                     <span className="text-sm text-[#60758B] ml-1">/ night</span>
                   </div>
@@ -443,10 +443,10 @@ export const RoomDetail: React.FC = () => {
                   <div className="mt-3 pt-4 border-t border-[#D8E0EA] flex flex-col gap-2 text-xs">
                     <div className="flex items-center justify-between text-[#60758B]">
                       <span>
-                        ${room.pricePerNight} × {nights} {nights === 1 ? 'night' : 'nights'}
+                        ETB {room.pricePerNight} × {nights} {nights === 1 ? 'night' : 'nights'}
                         {roomsCount > 1 ? ` × ${roomsCount} rooms` : ''}
                       </span>
-                      <span>${estimatedTotal}</span>
+                      <span>ETB {estimatedTotal}</span>
                     </div>
                     <div className="flex items-center justify-between text-[#60758B]">
                       <span>Taxes & Resort Fees</span>
@@ -454,7 +454,7 @@ export const RoomDetail: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between text-base font-bold text-[#18324A] pt-2 border-t border-[#D8E0EA]">
                       <span>Estimated Total</span>
-                      <span className="text-xl text-[#062B45] font-sans">${estimatedTotal}</span>
+                      <span className="text-xl text-[#062B45] font-sans">ETB {estimatedTotal}</span>
                     </div>
                   </div>
 
@@ -527,7 +527,7 @@ export const RoomDetail: React.FC = () => {
 
                     <div className="flex items-center justify-between pt-3 mt-3 border-t border-[#D8E0EA]">
                       <span className="font-bold text-sm text-[#18324A] font-sans">
-                        ${other.pricePerNight} <span className="text-xs font-normal text-[#60758B]">/ night</span>
+                        ETB {other.pricePerNight} <span className="text-xs font-normal text-[#60758B]">/ night</span>
                       </span>
                       <Link
                         to={`/rooms/${other.id}`}

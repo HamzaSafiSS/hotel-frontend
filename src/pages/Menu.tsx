@@ -464,7 +464,7 @@ export const Menu: React.FC = () => {
                                 : 'bg-gray-100 hover:bg-gray-200 text-[#60758B]'
                             }`}
                           >
-                            {ord.orderReference} (${ord.totalPrice})
+                            {ord.orderReference} (ETB {ord.totalPrice})
                           </button>
                         );
                       })}
@@ -530,12 +530,12 @@ export const Menu: React.FC = () => {
                           <div className="min-w-0">
                             <strong className="text-[#18324A] block truncate">{item.name}</strong>
                             <span className="text-[11px] text-[#60758B]">
-                              {quantity} × ${item.price}
+                              {quantity} × ETB {item.price}
                             </span>
                           </div>
                         </div>
                         <span className="font-semibold text-[#062B45] shrink-0">
-                          ${item.price * quantity}
+                          ETB {item.price * quantity}
                         </span>
                       </div>
                     ))}
@@ -543,7 +543,7 @@ export const Menu: React.FC = () => {
 
                   <div className="mt-4 pt-3 border-t border-[#D8E0EA] flex items-center justify-between text-sm font-bold text-[#062B45]">
                     <span>Total Order Price</span>
-                    <span className="font-serif text-lg text-[#062B45]">${activeViewedOrder.totalPrice}</span>
+                    <span className="font-serif text-lg text-[#062B45]">ETB {activeViewedOrder.totalPrice}</span>
                   </div>
                 </div>
 
@@ -653,7 +653,7 @@ export const Menu: React.FC = () => {
                                   {quantity}× {item.name}
                                 </span>
                                 <span className="font-medium text-[#062B45] shrink-0">
-                                  ${item.price * quantity}
+                                  ETB {item.price * quantity}
                                 </span>
                               </div>
                             ))}
@@ -666,7 +666,7 @@ export const Menu: React.FC = () => {
                                 Total
                               </span>
                               <span className="font-serif text-base font-bold text-[#062B45]">
-                                ${order.totalPrice}
+                                ETB {order.totalPrice}
                               </span>
                             </div>
 

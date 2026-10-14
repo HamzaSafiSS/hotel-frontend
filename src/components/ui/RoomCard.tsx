@@ -116,7 +116,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
             <div>
               <div className="flex items-baseline">
                 <span className="text-xl font-bold text-[#18324A] font-sans">
-                  ${pricePerNight}
+                  ETB {pricePerNight}
                 </span>
                 <span className="text-xs text-[#60758B] ml-1">/ night</span>
               </div>

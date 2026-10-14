@@ -369,7 +369,7 @@ export const Booking: React.FC = () => {
                             {r.guests} Guests max • {r.size}
                           </span>
                           <span className="font-bold text-xs text-[#18324A] font-sans block mt-1">
-                            {settings.currencySymbol || '$'}{r.pricePerNight} <span className="font-normal text-[#60758B]">/ night</span>
+                            {settings.currencySymbol || 'ETB'} {r.pricePerNight} <span className="font-normal text-[#60758B]">/ night</span>
                           </span>
                         </div>
                       </div>
@@ -510,7 +510,7 @@ export const Booking: React.FC = () => {
                   <div className="text-right">
                     <span className="text-xs text-[#60758B] block">Estimated Subtotal</span>
                     <span className="text-2xl font-bold font-sans text-[#062B45]">
-                      ${estimatedTotal}
+                      ETB {estimatedTotal}
                     </span>
                   </div>
                 </div>
@@ -736,7 +736,7 @@ export const Booking: React.FC = () => {
                         {selectedRoom.bedType} • {selectedRoom.size}
                       </p>
                       <span className="text-xs font-bold text-[#18324A] font-sans">
-                        ${selectedRoom.pricePerNight} / night
+                        ETB {selectedRoom.pricePerNight} / night
                       </span>
                     </div>
                   </div>
@@ -796,9 +796,9 @@ export const Booking: React.FC = () => {
                     <div className="flex flex-col gap-2.5 text-xs text-[#60758B]">
                       <div className="flex items-center justify-between">
                         <span>
-                          ${selectedRoom.pricePerNight} × {nights} {nights === 1 ? 'night' : 'nights'}
+                          ETB {selectedRoom.pricePerNight} × {nights} {nights === 1 ? 'night' : 'nights'}
                         </span>
-                        <span>${selectedRoom.pricePerNight * nights}</span>
+                        <span>ETB {selectedRoom.pricePerNight * nights}</span>
                       </div>
                       {roomsCount > 1 && (
                         <div className="flex items-center justify-between">
@@ -820,10 +820,10 @@ export const Booking: React.FC = () => {
                   <div className="pt-4 mt-6 border-t border-[#D8E0EA]">
                     <div className="flex items-center justify-between text-base font-bold text-[#18324A] mb-2">
                       <span>Estimated Subtotal</span>
-                      <span className="text-2xl text-[#062B45] font-sans">${estimatedTotal}</span>
+                      <span className="text-2xl text-[#062B45] font-sans">ETB {estimatedTotal}</span>
                     </div>
                     <span className="text-[11px] text-[#60758B] block">
-                      All prices in USD. Nightly rate subject to local taxes at check-in.
+                      All prices in ETB. Nightly rate subject to local taxes at check-in.
                     </span>
                   </div>
                 </div>
@@ -916,7 +916,7 @@ export const Booking: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[11px]">Estimated Stay Subtotal</span>
-                    <strong className="text-[#062B45] text-sm">${confirmedBooking.totalEstimatedPrice}</strong>
+                    <strong className="text-[#062B45] text-sm">ETB {confirmedBooking.totalEstimatedPrice}</strong>
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[11px]">Guest Name</span>
@@ -1025,7 +1025,7 @@ export const Booking: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[10px]">Estimated Total:</span>
-                    <strong>${lookedUpBooking.totalEstimatedPrice}</strong>
+                    <strong>ETB {lookedUpBooking.totalEstimatedPrice}</strong>
                   </div>
                 </div>
               </div>

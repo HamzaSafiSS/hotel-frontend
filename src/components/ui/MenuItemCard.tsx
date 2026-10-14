@@ -51,7 +51,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
         {/* Price Tag Pill */}
         <div className="absolute bottom-3 right-3">
           <span className="font-serif text-lg font-bold text-white drop-shadow-md bg-[#062B45]/85 backdrop-blur-xs px-2.5 py-0.5 rounded-lg border border-white/20">
-            ${item.price}
+            ETB {item.price}
           </span>
         </div>
 

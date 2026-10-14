@@ -250,7 +250,7 @@ export const AdminDining: React.FC = () => {
 
                     {/* Price */}
                     <td className="py-3.5 px-4 font-bold text-[#062B45]">
-                      {settings.currencySymbol}{item.price}
+                      {settings.currencySymbol} {item.price}
                     </td>
 
                     {/* Dietary */}

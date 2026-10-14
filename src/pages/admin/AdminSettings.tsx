@@ -51,7 +51,7 @@ export const AdminSettings: React.FC = () => {
       contactPhone: '+1 (800) 555-7598',
       address: '124 Scenic Coastal Boulevard, Azure Haven, CA 90210',
       receptionHours: '24/7 Front Desk & Dedicated Concierge',
-      currencySymbol: '$',
+      currencySymbol: 'ETB',
       defaultCheckInTime: '3:00 PM',
       defaultCheckOutTime: '11:00 AM',
       copyrightText: '© 2026 Skyview Hotels & Resorts. All rights reserved.',
@@ -126,7 +126,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={formData.currencySymbol}
                 onChange={(e) => setFormData({ ...formData, currencySymbol: e.target.value })}
-                placeholder="$, €, £"
+                placeholder="ETB, $, €, £"
                 className="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#C7A66B]"
               />
               {errors.currencySymbol && (

@@ -233,7 +233,7 @@ export const AdminDashboard: React.FC = () => {
 
                       <div className="flex items-center justify-between sm:justify-end gap-3 pl-12 sm:pl-0">
                         <span className="text-xs font-semibold text-[#062B45]">
-                          {settings.currencySymbol}{b.totalEstimatedPrice}
+                          {settings.currencySymbol} {b.totalEstimatedPrice}
                         </span>
                         <AdminBadge label={b.status} variant={badgeVariant} />
                       </div>
@@ -389,7 +389,7 @@ export const AdminDashboard: React.FC = () => {
                   <h4 className="text-xs font-semibold text-[#062B45] truncate">{item.name}</h4>
                   <p className="text-[11px] text-slate-500 capitalize">{item.categoryLabel}</p>
                   <span className="text-xs font-bold text-[#C7A66B]">
-                    {settings.currencySymbol}{item.price}
+                    {settings.currencySymbol} {item.price}
                   </span>
                 </div>
               </div>

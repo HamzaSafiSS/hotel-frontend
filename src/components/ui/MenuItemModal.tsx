@@ -144,7 +144,7 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
               {item.categoryLabel}
             </span>
             <span className="font-serif text-2xl sm:text-3xl font-normal text-[#DFCA9B]">
-              ${item.price}
+              ETB {item.price}
             </span>
           </div>
         </div>
@@ -185,8 +185,8 @@ export const MenuItemModal: React.FC<MenuItemModalProps> = ({
                   Item Quantity
                 </span>
                 <span className="text-[11px] text-[#60758B]">
-                  ${item.price} each • Subtotal:{' '}
-                  <strong className="text-[#062B45] font-semibold">${lineTotal}</strong>
+                  ETB {item.price} each • Subtotal:{' '}
+                  <strong className="text-[#062B45] font-semibold">ETB {lineTotal}</strong>
                 </span>
               </div>
 

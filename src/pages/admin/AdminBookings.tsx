@@ -239,7 +239,7 @@ export const AdminBookings: React.FC = () => {
 
                     {/* Price */}
                     <td className="py-3.5 px-4 font-bold text-[#062B45]">
-                      {settings.currencySymbol}{b.totalEstimatedPrice}
+                      {settings.currencySymbol} {b.totalEstimatedPrice}
                     </td>
 
                     {/* Status */}
@@ -308,7 +308,7 @@ export const AdminBookings: React.FC = () => {
               <div className="text-right">
                 <span className="text-[10px] uppercase font-semibold text-slate-400 block">Total Est. Price</span>
                 <span className="text-base font-bold text-[#062B45]">
-                  {settings.currencySymbol}{selectedBooking.totalEstimatedPrice}
+                  {settings.currencySymbol} {selectedBooking.totalEstimatedPrice}
                 </span>
               </div>
             </div>

@@ -290,7 +290,7 @@ export const AdminRooms: React.FC = () => {
 
                     {/* Price */}
                     <td className="py-3.5 px-4 font-semibold text-[#062B45]">
-                      {settings.currencySymbol}{room.pricePerNight}
+                      {settings.currencySymbol} {room.pricePerNight}
                     </td>
 
                     {/* Capacity & Bed */}
@@ -649,7 +649,7 @@ export const AdminRooms: React.FC = () => {
               <div>
                 <span className="text-slate-400 block text-[10px] uppercase font-semibold">Rate</span>
                 <span className="font-bold text-[#062B45] text-sm">
-                  {settings.currencySymbol}{selectedRoom.pricePerNight} / night
+                  {settings.currencySymbol} {selectedRoom.pricePerNight} / night
                 </span>
               </div>
               <div>
