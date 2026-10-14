@@ -16,8 +16,10 @@ import {
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { Button } from '../components/ui/Button';
+import { useHotelStore } from '../store/hotelStore';
 
 export const About: React.FC = () => {
+  const { content } = useHotelStore();
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* 1. HERO SECTION */}
@@ -46,10 +48,10 @@ export const About: React.FC = () => {
               OUR HERITAGE & HOSPITALITY
             </span>
             <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-white tracking-tight mb-6 leading-tight">
-              A Sanctuary of Coastal Serenity and Thoughtful Luxury
+              {content.aboutIntroHeading || 'A Sanctuary of Coastal Serenity and Thoughtful Luxury'}
             </h1>
             <p className="text-base sm:text-lg text-gray-200 font-light leading-relaxed mb-8">
-              Welcome to Skyview Hotels & Resorts — where the rhythmic calm of coastal horizons meets authentic warmth, refined comfort, and moments designed to linger in memory.
+              {content.aboutIntroText || 'Welcome to Skyview Hotels & Resorts — where the rhythmic calm of coastal horizons meets authentic warmth, refined comfort, and moments designed to linger in memory.'}
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <Button
@@ -112,10 +114,10 @@ export const About: React.FC = () => {
               </h2>
               <div className="space-y-4 text-sm sm:text-base text-[#60758B] leading-relaxed">
                 <p>
-                  Skyview Hotels & Resorts was conceived as a coastal refuge where modern sophistication seamlessly blends with nature's tranquility. Positioned along picturesque bluffs, the property draws continuous inspiration from the shifting tides, coastal breezes, and panoramic sunsets that frame our grounds.
+                  {content.aboutStoryP1 || "Skyview Hotels & Resorts was conceived as a coastal refuge where modern sophistication seamlessly blends with nature's tranquility. Positioned along picturesque bluffs, the property draws continuous inspiration from the shifting tides, coastal breezes, and panoramic sunsets that frame our grounds."}
                 </p>
                 <p>
-                  Our hospitality philosophy centers on unobtrusive elegance and genuine human warmth. We believe that true luxury is neither hurried nor pretentious — it is found in the stillness of a morning espresso on a sunlit terrace, the tailored comfort of an acoustic-insulated suite, and the intuitive attentiveness of a host who remembers your personal preferences.
+                  {content.aboutStoryP2 || "Our hospitality philosophy centers on unobtrusive elegance and genuine human warmth. We believe that true luxury is neither hurried nor pretentious — it is found in the stillness of a morning espresso on a sunlit terrace, the tailored comfort of an acoustic-insulated suite, and the intuitive attentiveness of a host who remembers your personal preferences."}
                 </p>
                 <p>
                   Whether visiting for a weekend escape, a celebratory family gathering, or a restorative solo retreat, every touchpoint at Skyview is intentionally shaped to help you unwind and reconnect.
@@ -176,10 +178,10 @@ export const About: React.FC = () => {
                   OUR MISSION
                 </span>
                 <h3 className="font-serif text-2xl font-normal text-[#062B45] mb-4">
-                  Crafting Restorative Stays With Meaningful Attention
+                  {content.missionTitle || 'Crafting Restorative Stays With Meaningful Attention'}
                 </h3>
                 <p className="text-sm text-[#60758B] leading-relaxed mb-6">
-                  To provide guests with an exceptional hospitality experience rooted in attentive care, serene architectural design, and pristine coastal comfort. We are committed to making every stay effortless, memorable, and revitalizing for travelers from near and far.
+                  {content.missionDescription || 'To provide guests with an exceptional hospitality experience rooted in attentive care, serene architectural design, and pristine coastal comfort. We are committed to making every stay effortless, memorable, and revitalizing for travelers from near and far.'}
                 </p>
               </div>
               <ul className="space-y-2.5 text-xs text-[#18324A] pt-4 border-t border-[#D8E0EA]">
@@ -205,10 +207,10 @@ export const About: React.FC = () => {
                   OUR VISION
                 </span>
                 <h3 className="font-serif text-2xl font-normal text-[#062B45] mb-4">
-                  Setting the Benchmark for Mindful Luxury
+                  {content.visionTitle || 'Setting the Benchmark for Mindful Luxury'}
                 </h3>
                 <p className="text-sm text-[#60758B] leading-relaxed mb-6">
-                  To be celebrated as an exemplary coastal hotel where thoughtful luxury harmonizes with warm human connection. We strive to pioneer hospitality practices that respect our natural coastal surroundings while delivering unmatched service excellence.
+                  {content.visionDescription || 'To be celebrated as an exemplary coastal hotel where thoughtful luxury harmonizes with warm human connection. We strive to pioneer hospitality practices that respect our natural coastal surroundings while delivering unmatched service excellence.'}
                 </p>
               </div>
               <ul className="space-y-2.5 text-xs text-[#18324A] pt-4 border-t border-[#D8E0EA]">

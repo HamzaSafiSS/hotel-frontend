@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { Button } from '../components/ui/Button';
+import { useHotelStore } from '../store/hotelStore';
 
 interface FacilityDetail {
   id: string;
@@ -25,8 +26,10 @@ interface FacilityDetail {
   description: string;
   features: string[];
   imageUrl: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   actionLink?: { label: string; to: string };
+  actionLinkLabel?: string;
+  actionLinkTo?: string;
 }
 
 const FACILITIES_DATA: FacilityDetail[] = [
@@ -161,6 +164,12 @@ const FACILITIES_DATA: FacilityDetail[] = [
 ];
 
 export const Facilities: React.FC = () => {
+  const { facilities } = useHotelStore();
+  const publishedFacilities = React.useMemo(() => {
+    const list = facilities.filter((f) => f.published);
+    return list.length > 0 ? list : (FACILITIES_DATA as any);
+  }, [facilities]);
+
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* 1. HERO SECTION */}
@@ -254,80 +263,85 @@ export const Facilities: React.FC = () => {
 
           {/* 8 Facilities Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 items-stretch">
-            {FACILITIES_DATA.map((facility) => (
-              <div
-                key={facility.id}
-                className="group bg-white rounded-2xl border border-[#D8E0EA] overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
-              >
-                {/* Image Container */}
-                <div className="relative h-60 sm:h-64 w-full overflow-hidden bg-gray-100">
-                  <img
-                    src={facility.imageUrl}
-                    alt={facility.title}
-                    className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
+            {publishedFacilities.map((facility: any) => {
+              const linkTo = facility.actionLink?.to || facility.actionLinkTo;
+              const linkLabel = facility.actionLink?.label || facility.actionLinkLabel;
 
-                  {/* Category Pill */}
-                  <div className="absolute top-4 left-4">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider bg-white/90 backdrop-blur-xs text-[#062B45] px-3 py-1 rounded-full shadow-2xs flex items-center gap-1.5">
-                      {facility.icon}
-                      <span>{facility.category}</span>
-                    </span>
-                  </div>
+              return (
+                <div
+                  key={facility.id}
+                  className="group bg-white rounded-2xl border border-[#D8E0EA] overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                >
+                  {/* Image Container */}
+                  <div className="relative h-60 sm:h-64 w-full overflow-hidden bg-gray-100">
+                    <img
+                      src={facility.imageUrl}
+                      alt={facility.title}
+                      className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
 
-                  {/* Illustrative Tag */}
-                  <div className="absolute top-4 right-4">
-                    <span className="text-[10px] font-medium bg-[#062B45]/80 text-white/90 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/20">
-                      Illustrative Offering
-                    </span>
-                  </div>
-
-                  {/* Overlay Title */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="font-serif text-xl sm:text-2xl font-medium leading-snug text-[#DFCA9B]">
-                      {facility.title}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Content Container */}
-                <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between">
-                  <div>
-                    <p className="text-xs sm:text-sm text-[#60758B] leading-relaxed mb-5">
-                      {facility.description}
-                    </p>
-
-                    {/* Features List */}
-                    <ul className="space-y-2 mb-6">
-                      {facility.features.map((feat, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-xs text-[#18324A]">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#C7A66B] shrink-0 mt-0.5" />
-                          <span>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Action Link Footer */}
-                  {facility.actionLink && (
-                    <div className="pt-4 border-t border-[#D8E0EA] flex items-center justify-between">
-                      <span className="text-[11px] text-[#60758B]">
-                        Subject to availability
+                    {/* Category Pill */}
+                    <div className="absolute top-4 left-4">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider bg-white/90 backdrop-blur-xs text-[#062B45] px-3 py-1 rounded-full shadow-2xs flex items-center gap-1.5">
+                        {facility.icon}
+                        <span>{facility.category}</span>
                       </span>
-                      <Link
-                        to={facility.actionLink.to}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#062B45] hover:text-[#C7A66B] transition-colors group/link"
-                      >
-                        <span>{facility.actionLink.label}</span>
-                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
-                      </Link>
                     </div>
-                  )}
+
+                    {/* Illustrative Tag */}
+                    <div className="absolute top-4 right-4">
+                      <span className="text-[10px] font-medium bg-[#062B45]/80 text-white/90 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/20">
+                        Illustrative Offering
+                      </span>
+                    </div>
+
+                    {/* Overlay Title */}
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="font-serif text-xl sm:text-2xl font-medium leading-snug text-[#DFCA9B]">
+                        {facility.title}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Content Container */}
+                  <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between">
+                    <div>
+                      <p className="text-xs sm:text-sm text-[#60758B] leading-relaxed mb-5">
+                        {facility.description}
+                      </p>
+
+                      {/* Features List */}
+                      <ul className="space-y-2 mb-6">
+                        {(facility.features || []).map((feat: string, idx: number) => (
+                          <li key={idx} className="flex items-start gap-2 text-xs text-[#18324A]">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#C7A66B] shrink-0 mt-0.5" />
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Action Link Footer */}
+                    {linkTo && linkLabel && (
+                      <div className="pt-4 border-t border-[#D8E0EA] flex items-center justify-between">
+                        <span className="text-[11px] text-[#60758B]">
+                          Subject to availability
+                        </span>
+                        <Link
+                          to={linkTo}
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#062B45] hover:text-[#C7A66B] transition-colors group/link"
+                        >
+                          <span>{linkLabel}</span>
+                          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </ContentContainer>
       </section>

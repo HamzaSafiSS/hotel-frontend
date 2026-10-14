@@ -2,7 +2,11 @@ import React from 'react';
 import { ArrowRight, Utensils } from 'lucide-react';
 import { ContentContainer } from '../ui/ContentContainer';
 import { Button } from '../ui/Button';
+import { useHotelStore } from '../../store/hotelStore';
+
 export const HeroSection: React.FC = () => {
+  const { content } = useHotelStore();
+
   return (
     <section className="relative min-h-[85vh] lg:min-h-[90vh] flex items-center justify-center py-20 lg:py-28 overflow-hidden">
       {/* Background Image with High-End Resort Photography */}
@@ -24,17 +28,17 @@ export const HeroSection: React.FC = () => {
           <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
             {/* Eyebrow */}
             <span className="inline-block text-xs sm:text-sm font-semibold uppercase tracking-[0.25em] text-[#DFCA9B] mb-3 sm:mb-4 drop-shadow-xs">
-              LUXURY STAYS. UNFORGETTABLE JOURNEYS.
+              {content.heroEyebrow || 'LUXURY STAYS. UNFORGETTABLE JOURNEYS.'}
             </span>
 
             {/* Main Heading */}
             <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.1] tracking-tight text-white drop-shadow-md">
-              Your Perfect Getaway Awaits.
+              {content.heroHeading || 'Your Perfect Getaway Awaits.'}
             </h1>
 
             {/* Description */}
             <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg text-gray-100 max-w-2xl leading-relaxed font-light drop-shadow-xs">
-              Discover exceptional comfort, thoughtful hospitality, and memorable experiences at Skyview Hotels & Resorts.
+              {content.heroDescription || 'Discover exceptional comfort, thoughtful hospitality, and memorable experiences at Skyview Hotels & Resorts.'}
             </p>
 
             {/* Hero Buttons: Centered horizontally as a group, side-by-side on desktop, stacked on mobile */}
@@ -46,7 +50,7 @@ export const HeroSection: React.FC = () => {
                 icon={<ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />}
                 className="w-full sm:w-auto shadow-lg hover:shadow-xl font-medium tracking-wide group"
               >
-                Explore Available Rooms
+                {content.heroButtonRoomsLabel || 'Explore Available Rooms'}
               </Button>
 
               <Button
@@ -57,7 +61,7 @@ export const HeroSection: React.FC = () => {
                 iconPosition="left"
                 className="w-full sm:w-auto bg-white/95 hover:bg-white text-[#062B45] border-white/80 shadow-lg font-medium"
               >
-                Browse Restaurant & Menu
+                {content.heroButtonMenuLabel || 'Browse Restaurant & Menu'}
               </Button>
             </div>
           </div>

@@ -6,11 +6,22 @@ import {
   Mail,
   Clock,
   ShieldCheck,
+  Lock,
 } from 'lucide-react';
 import { FOOTER_COLUMNS, HOTEL_CONTACT } from '../../data/siteData';
 import { FooterLink } from '../ui/FooterLink';
+import { useHotelStore } from '../../store/hotelStore';
 
 export const Footer: React.FC = () => {
+  const { settings } = useHotelStore();
+
+  const hotelName = settings?.hotelName || 'Skyview Hotels & Resorts';
+  const address = settings?.address || HOTEL_CONTACT.address;
+  const phone = settings?.contactPhone || HOTEL_CONTACT.phone;
+  const email = settings?.contactEmail || HOTEL_CONTACT.email;
+  const receptionHours = settings?.receptionHours || HOTEL_CONTACT.receptionHours;
+  const copyrightText = settings?.copyrightText || '© 2026 Skyview Hotels & Resorts. All rights reserved.';
+
   return (
     <footer className="bg-[#062B45] text-white pt-16 pb-8 border-t border-[#0A3D60]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,7 +30,7 @@ export const Footer: React.FC = () => {
           <Link
             to="/"
             className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C7A66B] rounded-md"
-            aria-label="Skyview Hotels & Resorts Home"
+            aria-label={`${hotelName} Home`}
           >
             <div className="w-10 h-10 rounded-lg bg-white/10 border border-white/15 text-[#C7A66B] flex items-center justify-center">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
@@ -133,19 +144,19 @@ export const Footer: React.FC = () => {
             <ul className="space-y-3 text-sm text-gray-300">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#C7A66B] shrink-0 mt-0.5" />
-                <span className="leading-snug">{HOTEL_CONTACT.address}</span>
+                <span className="leading-snug">{address}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-[#C7A66B] shrink-0 mt-0.5" />
-                <span className="leading-snug">{HOTEL_CONTACT.phone}</span>
+                <span className="leading-snug">{phone}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-[#C7A66B] shrink-0 mt-0.5" />
-                <span className="leading-snug">{HOTEL_CONTACT.email}</span>
+                <span className="leading-snug">{email}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 text-[#C7A66B] shrink-0 mt-0.5" />
-                <span className="leading-snug">{HOTEL_CONTACT.receptionHours}</span>
+                <span className="leading-snug">{receptionHours}</span>
               </li>
             </ul>
 
@@ -159,9 +170,9 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar: Copyright, Privacy & Terms */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-4">
-          <p>© 2026 Skyview Hotels & Resorts. All rights reserved.</p>
+          <p>{copyrightText}</p>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <Link
               to="/privacy"
               className="hover:text-[#C7A66B] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C7A66B]"
@@ -174,6 +185,14 @@ export const Footer: React.FC = () => {
               className="hover:text-[#C7A66B] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C7A66B]"
             >
               Terms & Conditions
+            </Link>
+            <span className="text-gray-600">|</span>
+            <Link
+              to="/admin"
+              className="hover:text-[#C7A66B] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C7A66B] flex items-center gap-1.5 text-gray-300 hover:text-white"
+            >
+              <Lock className="w-3 h-3 text-[#C7A66B]" />
+              <span>Admin Console</span>
             </Link>
           </div>
         </div>

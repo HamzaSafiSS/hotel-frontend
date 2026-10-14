@@ -16,13 +16,17 @@ import {
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { Button } from '../components/ui/Button';
 import { getRoomById, SAMPLE_ROOMS } from '../data/siteData';
+import { useHotelStore } from '../store/hotelStore';
 
 export const RoomDetail: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { rooms } = useHotelStore();
 
-  const room = getRoomById(roomId);
+  const room = useMemo(() => {
+    return rooms.find((r) => r.id === roomId) || getRoomById(roomId);
+  }, [rooms, roomId]);
 
   // Helper for dates
   const getFutureDate = (daysAhead: number) => {

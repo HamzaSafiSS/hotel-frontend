@@ -140,15 +140,23 @@ const GALLERY_IMAGES: GalleryImage[] = [
   },
 ];
 
+import { useHotelStore } from '../store/hotelStore';
+
 export const Gallery: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeLightboxImage, setActiveLightboxImage] = useState<GalleryImage | null>(null);
+  const { gallery } = useHotelStore();
+
+  const publishedImages = useMemo(() => {
+    const list = gallery.filter((g) => g.published);
+    return list.length > 0 ? (list as any as GalleryImage[]) : GALLERY_IMAGES;
+  }, [gallery]);
 
   // Filter images based on selected category
   const filteredImages = useMemo(() => {
-    if (selectedCategory === 'all') return GALLERY_IMAGES;
-    return GALLERY_IMAGES.filter((img) => img.category === selectedCategory);
-  }, [selectedCategory]);
+    if (selectedCategory === 'all') return publishedImages;
+    return publishedImages.filter((img) => img.category === selectedCategory);
+  }, [selectedCategory, publishedImages]);
 
   // Handle ESC key to close lightbox
   useEffect(() => {

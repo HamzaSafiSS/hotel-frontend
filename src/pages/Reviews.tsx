@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Star,
@@ -10,96 +10,17 @@ import {
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { Button } from '../components/ui/Button';
-
-interface SampleReviewItem {
-  id: string;
-  guestName: string;
-  location: string;
-  roomType: string;
-  stayDate: string;
-  rating: number;
-  title: string;
-  comment: string;
-  highlights: string[];
-}
-
-const SAMPLE_REVIEWS_DATA: SampleReviewItem[] = [
-  {
-    id: 'rev-1',
-    guestName: 'Sarah M.',
-    location: 'San Francisco, CA',
-    roomType: 'Ocean View Suite',
-    stayDate: 'Recent Autumn Stay',
-    rating: 5,
-    title: 'An Unforgettable Coastal Horizon',
-    comment:
-      'The panoramic ocean views from the suite balcony were breathtaking from sunrise to dusk. The room design felt exceptionally thoughtful, from the plush bed linens to the acoustic serenity. The staff greeted us with genuine warmth every time we stepped into the lobby.',
-    highlights: ['Sunset balcony views', 'Acoustic comfort', 'Warm staff hospitality'],
-  },
-  {
-    id: 'rev-2',
-    guestName: 'David & Elena R.',
-    location: 'Milan, Italy',
-    roomType: 'Private Pool Villa',
-    stayDate: 'Anniversary Stay',
-    rating: 5,
-    title: 'Total Seclusion and Restorative Luxury',
-    comment:
-      'We celebrated our tenth anniversary in the Private Pool Villa. Having our own temperature-controlled plunge pool surrounded by tropical greenery was extraordinary. The candlelit terrace dinner arranged by the concierge was the highlight of our trip.',
-    highlights: ['Private plunge pool', 'Bespoke terrace dinner', 'Total privacy'],
-  },
-  {
-    id: 'rev-3',
-    guestName: 'Marcus V.',
-    location: 'London, UK',
-    roomType: 'Deluxe Room',
-    stayDate: 'Solo Coastal Retreat',
-    rating: 5,
-    title: 'Peaceful Ambiance and First-Class Amenities',
-    comment:
-      'As a remote professional needing calm, the room’s ergonomic desk and ultra-fast Wi-Fi were top tier. Taking morning walks along the coastal bluffs followed by an espresso in the seaside pavilion made this stay restorative and seamless.',
-    highlights: ['High-speed Wi-Fi', 'Ergonomic workspace', 'Morning seaside dining'],
-  },
-  {
-    id: 'rev-4',
-    guestName: 'Helena & Julian T.',
-    location: 'Zurich, Switzerland',
-    roomType: 'Family Suite',
-    stayDate: 'Family Vacation',
-    rating: 5,
-    title: 'Effortless Family Comfort and Spacious Design',
-    comment:
-      'Traveling with two young children is rarely restful, but the Family Suite made everything effortless. The dual bathrooms eliminated morning delays, and the children loved the starlight lawn cinema evening while we enjoyed wine on the veranda.',
-    highlights: ['Dual bathrooms', 'Spacious central living room', 'Family lawn cinema'],
-  },
-  {
-    id: 'rev-5',
-    guestName: 'Chloe S.',
-    location: 'New York, NY',
-    roomType: 'Ocean View Suite',
-    stayDate: 'Weekend Getaway',
-    rating: 5,
-    title: 'Every Detail Handled With Precision',
-    comment:
-      'From the smooth digital check-in to the aromatic botanical spa ritual, Skyview exceeded our expectations. The dinner at the seaside restaurant was fresh, vibrant, and paired with stellar local wines. We cannot wait to return.',
-    highlights: ['Botanical wellness spa', 'Digital dining service', 'Master sommelier wine pairing'],
-  },
-  {
-    id: 'rev-6',
-    guestName: 'Jonathan P.',
-    location: 'Sydney, Australia',
-    roomType: 'Private Pool Villa',
-    stayDate: 'Restorative Holiday',
-    rating: 5,
-    title: 'The Perfect Coastal Escape',
-    comment:
-      'Impeccable cleanliness, soothing natural lighting, and attentive concierge service without feeling intrusive. The infinity pool overlooking the ocean felt like a private sanctuary. A masterclass in luxury hotel hospitality.',
-    highlights: ['Infinity pool horizons', 'Attentive discreet care', 'Architectural elegance'],
-  },
-];
+import { useHotelStore } from '../store/hotelStore';
 
 export const Reviews: React.FC = () => {
+  const { reviews } = useHotelStore();
   const [selectedRoomFilter, setSelectedRoomFilter] = useState<string>('all');
+
+  const publishedReviews = useMemo(() => {
+    return reviews
+      .filter((r) => r.published)
+      .sort((a, b) => a.displayOrder - b.displayOrder);
+  }, [reviews]);
 
   const roomFilters = [
     { id: 'all', label: 'All Reviews' },
@@ -109,9 +30,10 @@ export const Reviews: React.FC = () => {
     { id: 'Deluxe Room', label: 'Deluxe Room' },
   ];
 
-  const filteredReviews = selectedRoomFilter === 'all'
-    ? SAMPLE_REVIEWS_DATA
-    : SAMPLE_REVIEWS_DATA.filter((r) => r.roomType === selectedRoomFilter);
+  const filteredReviews = useMemo(() => {
+    if (selectedRoomFilter === 'all') return publishedReviews;
+    return publishedReviews.filter((r) => r.roomType === selectedRoomFilter);
+  }, [selectedRoomFilter, publishedReviews]);
 
   return (
     <div className="flex-1 flex flex-col bg-white">
@@ -221,7 +143,12 @@ export const Reviews: React.FC = () => {
 
           {/* Review Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
-            {filteredReviews.map((rev) => (
+            {filteredReviews.length === 0 ? (
+              <div className="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-[#D8E0EA] p-8">
+                <p className="text-sm text-[#60758B]">No published guest reviews available for this category.</p>
+              </div>
+            ) : (
+              filteredReviews.map((rev) => (
               <div
                 key={rev.id}
                 className="bg-white rounded-2xl border border-[#D8E0EA] p-6 sm:p-7 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
@@ -273,7 +200,7 @@ export const Reviews: React.FC = () => {
                   </span>
                 </div>
               </div>
-            ))}
+            )))}
           </div>
         </ContentContainer>
       </section>

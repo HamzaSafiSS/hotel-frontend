@@ -11,148 +11,7 @@ import {
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { Button } from '../components/ui/Button';
-
-interface FAQItem {
-  id: string;
-  category: 'checkin' | 'reservations' | 'family' | 'dining' | 'facilities' | 'general';
-  categoryLabel: string;
-  question: string;
-  answer: string;
-}
-
-const FAQS_DATA: FAQItem[] = [
-  // 1. Check-in and Check-out
-  {
-    id: 'faq-1',
-    category: 'checkin',
-    categoryLabel: 'Check-in & Arrival',
-    question: 'What are the standard check-in and check-out times?',
-    answer:
-      'Standard guest check-in begins at 3:00 PM, and check-out is at 11:00 AM. Early arrivals and late departures are accommodated whenever availability permits; please contact our front desk ahead of time to coordinate your arrival timing.',
-  },
-  {
-    id: 'faq-2',
-    category: 'checkin',
-    categoryLabel: 'Check-in & Arrival',
-    question: 'Can I request an early check-in or late check-out?',
-    answer:
-      'Early check-in and extended check-out may be requested through our concierge or during your booking process. While subject to room availability, our team will gladly hold your luggage and grant access to resort pools and dining areas while your suite is readied.',
-  },
-  {
-    id: 'faq-3',
-    category: 'checkin',
-    categoryLabel: 'Check-in & Arrival',
-    question: 'What documents are required upon arrival?',
-    answer:
-      'Guests are asked to present a valid government-issued photo ID (passport, national ID, or driver’s license) alongside a payment card for room incidentals at reception.',
-  },
-
-  // 2. Room Reservations & Cancellations
-  {
-    id: 'faq-4',
-    category: 'reservations',
-    categoryLabel: 'Reservations & Policies',
-    question: 'How do I modify or cancel a room reservation?',
-    answer:
-      'Reservations made directly through our website can be managed by contacting our concierge desk with your booking reference. Illustrative policies typically permit cancellation up to 48 hours prior to scheduled arrival without penalty (final terms must be verified prior to actual booking confirmation).',
-  },
-  {
-    id: 'faq-5',
-    category: 'reservations',
-    categoryLabel: 'Reservations & Policies',
-    question: 'Are sample portfolio rates and room bookings live?',
-    answer:
-      'Please note that this website is a portfolio presentation. All room rates, sample booking confirmations, and lookup tools are frontend demonstrations. No real credit card transactions or live room holds occur.',
-  },
-
-  // 3. Children & Family Stays
-  {
-    id: 'faq-6',
-    category: 'family',
-    categoryLabel: 'Family Stays',
-    question: 'Is Skyview Hotels & Resorts family-friendly?',
-    answer:
-      'Yes, families are warmly welcomed. Our Family Suites feature dual bathrooms, separate sleeping quarters, and optional baby cribs or rollaway beds. We also offer child-friendly dining menus and family activities such as starlight lawn screenings.',
-  },
-  {
-    id: 'faq-7',
-    category: 'family',
-    categoryLabel: 'Family Stays',
-    question: 'Do you provide baby cribs and child safety accommodations?',
-    answer:
-      'Complimentary baby cribs, high chairs, and child-safe corner cushions can be requested during reservation or arranged directly with housekeeping upon check-in.',
-  },
-
-  // 4. Dining & Restaurant Hours
-  {
-    id: 'faq-8',
-    category: 'dining',
-    categoryLabel: 'Dining & Room Service',
-    question: 'What are the operating hours for the restaurant and bar?',
-    answer:
-      'Sample dining schedules are: Breakfast from 7:00 AM – 10:30 AM; Lunch from 12:00 PM – 2:30 PM; Dinner from 6:00 PM – 10:00 PM. The Seaside Bar & Sunset Lounge serves cocktails and light refreshments until 11:30 PM. Operating hours are illustrative and subject to seasonal confirmation.',
-  },
-  {
-    id: 'faq-9',
-    category: 'dining',
-    categoryLabel: 'Dining & Room Service',
-    question: 'Is room service available round-the-clock?',
-    answer:
-      'In-room dining operates with a full menu throughout the day, and an artisanal night menu of savory dishes, snacks, and beverages is accessible 24 hours a day by dialing extension 104 from your suite.',
-  },
-  {
-    id: 'faq-10',
-    category: 'dining',
-    categoryLabel: 'Dining & Room Service',
-    question: 'Can dietary restrictions and allergies be accommodated?',
-    answer:
-      'Our culinary team regularly accommodates vegetarian, vegan, gluten-sensitive, dairy-free, and nut-allergy requests. Please inform our servers or note dietary requirements when making dining reservations.',
-  },
-
-  // 5. Facilities & Amenities
-  {
-    id: 'faq-11',
-    category: 'facilities',
-    categoryLabel: 'Facilities & Wi-Fi',
-    question: 'What are the swimming pool and fitness studio hours?',
-    answer:
-      'The oceanfront infinity pool is open daily from 7:00 AM until 9:00 PM. Our wellness fitness studio is accessible 24 hours a day with room keycard access for registered guests.',
-  },
-  {
-    id: 'faq-12',
-    category: 'facilities',
-    categoryLabel: 'Facilities & Wi-Fi',
-    question: 'Is high-speed Wi-Fi complimentary throughout the resort?',
-    answer:
-      'Yes, complimentary high-speed fiber-optic Wi-Fi is available across all guest suites, private villas, dining pavilions, pool terraces, and landscaped courtyards.',
-  },
-  {
-    id: 'faq-13',
-    category: 'facilities',
-    categoryLabel: 'Facilities & Wi-Fi',
-    question: 'Do you offer airport transfer services and valet parking?',
-    answer:
-      'Chauffeured luxury airport transfers can be scheduled with our concierge team in advance. On-site valet parking and EV charging bays are complimentary for registered hotel guests.',
-  },
-
-  // 6. Accessibility & General
-  {
-    id: 'faq-14',
-    category: 'general',
-    categoryLabel: 'Accessibility & Support',
-    question: 'Are there wheelchair-accessible rooms and resort facilities?',
-    answer:
-      'Skyview features wheelchair-accessible suites equipped with roll-in rain showers, wider entryways, and lowered counters. Elevator access and graded ramps connect all main lobby, dining, and pool areas.',
-  },
-  {
-    id: 'faq-15',
-    category: 'general',
-    categoryLabel: 'Accessibility & Support',
-    question: 'How can I contact the hotel concierge team?',
-    answer:
-      'Our dedicated guest relations desk is available 24 hours a day via telephone (+1 800 555-7598), email (reservations@skyviewhotels.com), or through our website contact form.',
-  },
-];
+import { useHotelStore } from '../store/hotelStore';
 
 const FAQ_CATEGORIES = [
   { id: 'all', label: 'All Questions' },
@@ -165,11 +24,18 @@ const FAQ_CATEGORIES = [
 ];
 
 export const FAQs: React.FC = () => {
+  const { faqs } = useHotelStore();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [openItemIds, setOpenItemIds] = useState<Set<string>>(
     new Set(['faq-1', 'faq-4', 'faq-8'])
   );
+
+  const publishedFAQs = useMemo(() => {
+    return faqs
+      .filter((f) => f.published)
+      .sort((a, b) => a.displayOrder - b.displayOrder);
+  }, [faqs]);
 
   const toggleItem = (id: string) => {
     setOpenItemIds((prev) => {
@@ -184,7 +50,7 @@ export const FAQs: React.FC = () => {
   };
 
   const expandAll = () => {
-    setOpenItemIds(new Set(FAQS_DATA.map((f) => f.id)));
+    setOpenItemIds(new Set(publishedFAQs.map((f) => f.id)));
   };
 
   const collapseAll = () => {
@@ -195,7 +61,7 @@ export const FAQs: React.FC = () => {
   const filteredFAQs = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    return FAQS_DATA.filter((item) => {
+    return publishedFAQs.filter((item) => {
       // 1. Category match
       if (selectedCategory !== 'all' && item.category !== selectedCategory) {
         return false;

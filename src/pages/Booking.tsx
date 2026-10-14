@@ -15,11 +15,19 @@ import {
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { Button } from '../components/ui/Button';
-import { SAMPLE_ROOMS, getRoomById } from '../data/siteData';
+import { SAMPLE_ROOMS } from '../data/siteData';
 import type { DemoBooking } from '../data/siteData';
+import { useHotelStore } from '../store/hotelStore';
 
 export const Booking: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const { rooms, addBooking, settings } = useHotelStore();
+
+  // Only published and active rooms are bookable in the demo flow
+  const activeRooms = useMemo(() => {
+    const pub = rooms.filter((r) => r.published && r.active);
+    return pub.length > 0 ? pub : SAMPLE_ROOMS;
+  }, [rooms]);
 
   // Helper for dates
   const getFutureDate = (daysAhead: number) => {
@@ -32,7 +40,7 @@ export const Booking: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   // Step 1: Stay Details State
-  const initialRoomId = searchParams.get('roomId') || 'deluxe-room';
+  const initialRoomId = searchParams.get('roomId') || activeRooms[0]?.id || 'deluxe-room';
   const [selectedRoomId, setSelectedRoomId] = useState<string>(initialRoomId);
   const [checkIn, setCheckIn] = useState<string>(
     () => searchParams.get('checkIn') || getFutureDate(1)
@@ -69,8 +77,12 @@ export const Booking: React.FC = () => {
 
   // Currently Selected Room
   const selectedRoom = useMemo(() => {
-    return getRoomById(selectedRoomId) || SAMPLE_ROOMS[0];
-  }, [selectedRoomId]);
+    return (
+      activeRooms.find((r) => r.id === selectedRoomId) ||
+      activeRooms[0] ||
+      SAMPLE_ROOMS[0]
+    );
+  }, [activeRooms, selectedRoomId]);
 
   // Calculate nights
   const nights = useMemo(() => {
@@ -168,17 +180,9 @@ export const Booking: React.FC = () => {
       status: 'Pending Confirmation',
     };
 
-    // Save in local state and localStorage for demo retrieval
+    // Save in local state and reactive store for admin dashboard
     setConfirmedBooking(newBooking);
-
-    try {
-      const stored = localStorage.getItem('skyview_demo_bookings');
-      const list: DemoBooking[] = stored ? JSON.parse(stored) : [];
-      list.unshift(newBooking);
-      localStorage.setItem('skyview_demo_bookings', JSON.stringify(list));
-    } catch {
-      // safe fallback if storage disabled
-    }
+    addBooking(newBooking as any);
 
     setCurrentStep(4);
     window.scrollTo({ top: 80, behavior: 'smooth' });
@@ -337,7 +341,7 @@ export const Booking: React.FC = () => {
                     Choose Your Room or Suite
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {SAMPLE_ROOMS.map((r) => (
+                    {activeRooms.map((r) => (
                       <div
                         key={r.id}
                         onClick={() => setSelectedRoomId(r.id)}
@@ -365,7 +369,7 @@ export const Booking: React.FC = () => {
                             {r.guests} Guests max • {r.size}
                           </span>
                           <span className="font-bold text-xs text-[#18324A] font-sans block mt-1">
-                            ${r.pricePerNight} <span className="font-normal text-[#60758B]">/ night</span>
+                            {settings.currencySymbol || '$'}{r.pricePerNight} <span className="font-normal text-[#60758B]">/ night</span>
                           </span>
                         </div>
                       </div>

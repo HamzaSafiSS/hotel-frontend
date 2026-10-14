@@ -18,6 +18,7 @@ import { MenuItemCard } from '../components/ui/MenuItemCard';
 import { MenuItemModal } from '../components/ui/MenuItemModal';
 import { MENU_ITEMS, MENU_CATEGORIES } from '../data/menuData';
 import type { MenuItem } from '../data/menuData';
+import { useHotelStore } from '../store/hotelStore';
 
 export interface PlacedOrderItem {
   item: MenuItem;
@@ -38,6 +39,12 @@ export interface PlacedOrderRecord {
 
 export const Menu: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { menuItems } = useHotelStore();
+
+  const publishedMenuItems = useMemo(() => {
+    const list = menuItems.filter((m) => m.published);
+    return list.length > 0 ? (list as any as MenuItem[]) : MENU_ITEMS;
+  }, [menuItems]);
 
   // Selected Category State (prefilled from URL query if present)
   const [selectedCategory, setSelectedCategory] = useState<string>(
@@ -97,7 +104,7 @@ export const Menu: React.FC = () => {
   const filteredItems = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    return MENU_ITEMS.filter((item) => {
+    return publishedMenuItems.filter((item) => {
       // 1. Category match
       if (selectedCategory !== 'all' && item.category !== selectedCategory) {
         return false;

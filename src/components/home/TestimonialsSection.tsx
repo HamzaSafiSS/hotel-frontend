@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Star, Quote, Sparkles } from 'lucide-react';
 import { ContentContainer } from '../ui/ContentContainer';
 import { SectionHeading } from '../ui/SectionHeading';
-import { SAMPLE_TESTIMONIALS } from '../../data/siteData';
+import { useHotelStore } from '../../store/hotelStore';
 
 export const TestimonialsSection: React.FC = () => {
+  const { reviews } = useHotelStore();
+
+  const displayReviews = useMemo(() => {
+    return reviews
+      .filter((r) => r.published)
+      .sort((a, b) => a.displayOrder - b.displayOrder)
+      .slice(0, 3);
+  }, [reviews]);
+
   return (
     <section className="py-16 sm:py-24 bg-[#EAF2FF]/30 border-t border-[#D8E0EA]">
       <ContentContainer size="7xl">
@@ -20,7 +29,7 @@ export const TestimonialsSection: React.FC = () => {
 
         {/* 3 Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
-          {SAMPLE_TESTIMONIALS.map((testimonial) => (
+          {displayReviews.map((testimonial) => (
             <div
               key={testimonial.id}
               className="bg-white border border-[#D8E0EA] rounded-2xl p-6 sm:p-7 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
@@ -44,15 +53,12 @@ export const TestimonialsSection: React.FC = () => {
 
               {/* Guest Profile Info */}
               <div className="flex items-center gap-3.5 pt-4 border-t border-[#D8E0EA]">
-                <img
-                  src={testimonial.avatarUrl}
-                  alt={testimonial.name}
-                  className="w-11 h-11 rounded-full object-cover border-2 border-[#C7A66B]/40"
-                  loading="lazy"
-                />
+                <div className="w-11 h-11 rounded-full bg-[#062B45] text-[#DFCA9B] font-serif font-bold text-sm flex items-center justify-center border-2 border-[#C7A66B]/40 shrink-0">
+                  {testimonial.guestName ? testimonial.guestName.charAt(0).toUpperCase() : 'G'}
+                </div>
                 <div>
                   <h4 className="font-serif text-sm font-semibold text-[#062B45]">
-                    {testimonial.name}
+                    {testimonial.guestName}
                   </h4>
                   <span className="text-xs text-[#60758B]">
                     {testimonial.location}

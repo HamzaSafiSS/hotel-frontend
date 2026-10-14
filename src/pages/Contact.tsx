@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { HOTEL_CONTACT } from '../data/siteData';
+import { useHotelStore } from '../store/hotelStore';
 
 interface ContactFormData {
   fullName: string;
@@ -32,6 +33,8 @@ interface FormErrors {
 }
 
 export const Contact: React.FC = () => {
+  const { addEnquiry, settings } = useHotelStore();
+
   const [formData, setFormData] = useState<ContactFormData>({
     fullName: '',
     email: '',
@@ -84,6 +87,15 @@ export const Contact: React.FC = () => {
     e.preventDefault();
 
     if (validate()) {
+      // Persist to shared store so it appears in the admin dashboard immediately
+      addEnquiry({
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || undefined,
+        subject: formData.subject,
+        message: formData.message.trim(),
+      });
+
       setSubmittedData({ ...formData });
       setIsSubmitted(true);
       setErrors({});
@@ -178,7 +190,7 @@ export const Contact: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-[#062B45] block font-semibold">Resort Address:</strong>
-                    <span className="text-[#18324A]">{HOTEL_CONTACT.address}</span>
+                    <span className="text-[#18324A]">{settings.address || HOTEL_CONTACT.address}</span>
                     <span className="text-[11px] text-[#60758B] block mt-0.5">
                       (Illustrative sample address)
                     </span>
@@ -191,7 +203,7 @@ export const Contact: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-[#062B45] block font-semibold">Telephone Inquiries:</strong>
-                    <span className="text-[#18324A]">{HOTEL_CONTACT.phone}</span>
+                    <span className="text-[#18324A]">{settings.contactPhone || HOTEL_CONTACT.phone}</span>
                     <span className="text-[11px] text-[#60758B] block mt-0.5">
                       (Toll-free demonstration line)
                     </span>
@@ -204,7 +216,7 @@ export const Contact: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-[#062B45] block font-semibold">Email Reservations:</strong>
-                    <span className="text-[#18324A]">{HOTEL_CONTACT.email}</span>
+                    <span className="text-[#18324A]">{settings.contactEmail || HOTEL_CONTACT.email}</span>
                     <span className="text-[11px] text-[#60758B] block mt-0.5">
                       (General guest communications)
                     </span>
@@ -217,7 +229,7 @@ export const Contact: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-[#062B45] block font-semibold">Desk Operating Hours:</strong>
-                    <span className="text-[#18324A]">{HOTEL_CONTACT.receptionHours}</span>
+                    <span className="text-[#18324A]">{settings.receptionHours || HOTEL_CONTACT.receptionHours}</span>
                     <span className="text-[11px] text-[#60758B] block mt-0.5">
                       (Illustrative unverified service hours)
                     </span>

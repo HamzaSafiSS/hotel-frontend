@@ -186,12 +186,20 @@ const EXPERIENCES_DATA: ExperienceDetail[] = [
   },
 ];
 
+import { useHotelStore } from '../store/hotelStore';
+
 export const Experiences: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const { experiences } = useHotelStore();
+
+  const publishedExperiences = React.useMemo(() => {
+    const list = experiences.filter((e) => e.published);
+    return list.length > 0 ? (list as any) : EXPERIENCES_DATA;
+  }, [experiences]);
 
   const filteredExperiences = selectedFilter === 'all'
-    ? EXPERIENCES_DATA
-    : EXPERIENCES_DATA.filter((e) => e.section === selectedFilter);
+    ? publishedExperiences
+    : publishedExperiences.filter((e: any) => e.section === selectedFilter);
 
   const sections = [
     { id: 'all', label: 'All Experiences' },
@@ -320,7 +328,7 @@ export const Experiences: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
-            {filteredExperiences.map((exp) => (
+            {filteredExperiences.map((exp: any) => (
               <div
                 key={exp.id}
                 className="group bg-white rounded-2xl border border-[#D8E0EA] overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
@@ -362,7 +370,7 @@ export const Experiences: React.FC = () => {
                     </p>
 
                     <ul className="space-y-1.5 mb-6">
-                      {exp.highlights.map((item, idx) => (
+                      {exp.highlights.map((item: string, idx: number) => (
                         <li key={idx} className="flex items-start gap-2 text-xs text-[#18324A]">
                           <CheckCircle2 className="w-3.5 h-3.5 text-[#C7A66B] shrink-0 mt-0.5" />
                           <span>{item}</span>

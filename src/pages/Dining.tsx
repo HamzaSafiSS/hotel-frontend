@@ -25,10 +25,16 @@ import {
 } from '../data/menuData';
 import type { MenuItem } from '../data/menuData';
 import { HOTEL_CONTACT } from '../data/siteData';
+import { useHotelStore } from '../store/hotelStore';
 
 export const Dining: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-  const featuredDishes = getFeaturedDishes();
+  const { menuItems } = useHotelStore();
+
+  const featuredDishes = React.useMemo(() => {
+    const list = menuItems.filter((m) => m.published && m.featured);
+    return list.length > 0 ? (list as any) : getFeaturedDishes();
+  }, [menuItems]);
 
   const handleScrollToIntro = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -290,7 +296,7 @@ export const Dining: React.FC = () => {
 
           {/* 4 Featured Dishes Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 items-stretch mb-12">
-            {featuredDishes.map((dish) => (
+            {featuredDishes.map((dish: any) => (
               <MenuItemCard
                 key={dish.id}
                 item={dish}

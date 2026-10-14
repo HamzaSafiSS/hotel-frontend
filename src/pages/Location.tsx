@@ -18,8 +18,14 @@ import {
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { Button } from '../components/ui/Button';
 import { HOTEL_CONTACT } from '../data/siteData';
+import { useHotelStore } from '../store/hotelStore';
 
 export const Location: React.FC = () => {
+  const { settings } = useHotelStore();
+  const address = settings?.address || HOTEL_CONTACT.address;
+  const phone = settings?.contactPhone || HOTEL_CONTACT.phone;
+  const email = settings?.contactEmail || HOTEL_CONTACT.email;
+  const receptionHours = settings?.receptionHours || HOTEL_CONTACT.receptionHours;
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* 1. HERO SECTION */}
@@ -111,7 +117,7 @@ export const Location: React.FC = () => {
                   <MapPin className="w-5 h-5 text-[#C7A66B] shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#062B45] block font-semibold">Resort Location:</strong>
-                    <span className="text-[#18324A]">{HOTEL_CONTACT.address}</span>
+                    <span className="text-[#18324A]">{address}</span>
                     <span className="text-[11px] text-[#60758B] block mt-0.5">
                       (Sample demonstration address)
                     </span>
@@ -122,7 +128,7 @@ export const Location: React.FC = () => {
                   <Phone className="w-5 h-5 text-[#C7A66B] shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#062B45] block font-semibold">Concierge & Front Desk:</strong>
-                    <span className="text-[#18324A]">{HOTEL_CONTACT.phone}</span>
+                    <span className="text-[#18324A]">{phone}</span>
                   </div>
                 </div>
 
@@ -130,7 +136,7 @@ export const Location: React.FC = () => {
                   <Mail className="w-5 h-5 text-[#C7A66B] shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#062B45] block font-semibold">Reservations Inquiries:</strong>
-                    <span className="text-[#18324A]">{HOTEL_CONTACT.email}</span>
+                    <span className="text-[#18324A]">{email}</span>
                   </div>
                 </div>
 
@@ -138,7 +144,7 @@ export const Location: React.FC = () => {
                   <Clock className="w-5 h-5 text-[#C7A66B] shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#062B45] block font-semibold">Reception Hours:</strong>
-                    <span className="text-[#18324A]">{HOTEL_CONTACT.receptionHours}</span>
+                    <span className="text-[#18324A]">{receptionHours}</span>
                   </div>
                 </div>
               </div>

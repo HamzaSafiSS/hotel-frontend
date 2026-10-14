@@ -10,8 +10,16 @@ import { ContentContainer } from '../components/ui/ContentContainer';
 import { RoomCard } from '../components/ui/RoomCard';
 import { SAMPLE_ROOMS } from '../data/siteData';
 import type { RoomItem } from '../data/siteData';
+import { useHotelStore } from '../store/hotelStore';
 
 export const Rooms: React.FC = () => {
+  const { rooms } = useHotelStore();
+
+  const publishedRooms = useMemo(() => {
+    const list = rooms.filter((r) => r.published && r.active);
+    return list.length > 0 ? list : SAMPLE_ROOMS;
+  }, [rooms]);
+
   // Filter & Sorting State (Category, Max Price, Minimum Capacity, Sort)
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [maxPrice, setMaxPrice] = useState<number>(350);
@@ -28,7 +36,7 @@ export const Rooms: React.FC = () => {
 
   // Filtered and Sorted Rooms Calculation
   const filteredRooms = useMemo(() => {
-    return SAMPLE_ROOMS.filter((room: RoomItem) => {
+    return publishedRooms.filter((room: RoomItem) => {
       // 1. Capacity filter
       if (room.guests < minCapacity) {
         return false;

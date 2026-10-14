@@ -3,8 +3,10 @@ import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Menu, X, ArrowRight, Compass } from 'lucide-react';
 import { NAV_LINKS } from '../../data/siteData';
 import { Button } from '../ui/Button';
+import { useHotelStore } from '../../store/hotelStore';
 
 export const Navbar: React.FC = () => {
+  const { settings } = useHotelStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -36,6 +38,11 @@ export const Navbar: React.FC = () => {
     };
   }, [mobileMenuOpen]);
 
+  const brandFirstWord = settings?.hotelName ? settings.hotelName.split(' ')[0] : 'Skyview';
+  const brandRest = settings?.hotelName && settings.hotelName.includes(' ')
+    ? settings.hotelName.substring(settings.hotelName.indexOf(' ') + 1)
+    : 'Hotels & Resorts';
+
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
@@ -50,26 +57,34 @@ export const Navbar: React.FC = () => {
           <Link
             to="/"
             className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C7A66B] rounded-md py-1"
-            aria-label="Skyview Hotels & Resorts Home"
+            aria-label={`${settings?.hotelName || 'Skyview Hotels & Resorts'} Home`}
           >
-            {/* Geometric Mountain/Peak Monogram Icon */}
-            <div className="w-10 h-10 rounded-lg bg-[#062B45] text-[#C7A66B] flex items-center justify-center shadow-xs group-hover:bg-[#0A3D60] transition-colors">
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-5 h-5 transition-transform duration-300 group-hover:scale-105"
-              >
-                <path d="M12 3L2 19h20L12 3zm0 4.2L18.1 17H5.9L12 7.2z" />
-                <path d="M12 11.5l3.5 5.5H8.5l3.5-5.5z" opacity="0.8" />
-              </svg>
-            </div>
+            {/* Geometric Mountain/Peak Monogram Icon or configured Logo */}
+            {settings?.logoUrl ? (
+              <img
+                src={settings.logoUrl}
+                alt={settings.hotelName}
+                className="w-10 h-10 rounded-lg object-cover border border-[#D8E0EA]"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-lg bg-[#062B45] text-[#C7A66B] flex items-center justify-center shadow-xs group-hover:bg-[#0A3D60] transition-colors">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 transition-transform duration-300 group-hover:scale-105"
+                >
+                  <path d="M12 3L2 19h20L12 3zm0 4.2L18.1 17H5.9L12 7.2z" />
+                  <path d="M12 11.5l3.5 5.5H8.5l3.5-5.5z" opacity="0.8" />
+                </svg>
+              </div>
+            )}
 
             <div className="flex flex-col">
               <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#062B45] leading-none group-hover:text-[#0A3D60] transition-colors">
-                Skyview
+                {brandFirstWord}
               </span>
               <span className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#C7A66B] font-semibold mt-0.5">
-                Hotels & Resorts
+                {brandRest}
               </span>
             </div>
           </Link>

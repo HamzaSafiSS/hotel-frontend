@@ -5,8 +5,16 @@ import { SectionHeading } from '../ui/SectionHeading';
 import { Button } from '../ui/Button';
 import { RoomCard } from '../ui/RoomCard';
 import { SAMPLE_ROOMS } from '../../data/siteData';
+import { useHotelStore } from '../../store/hotelStore';
 
 export const FeaturedRoomsSection: React.FC = () => {
+  const { rooms } = useHotelStore();
+
+  const featuredRooms = React.useMemo(() => {
+    const published = rooms.filter((r) => r.published && r.active);
+    return published.length > 0 ? published.slice(0, 4) : SAMPLE_ROOMS.slice(0, 4);
+  }, [rooms]);
+
   return (
     <section className="py-16 sm:py-24 bg-white">
       <ContentContainer size="7xl">
@@ -32,7 +40,7 @@ export const FeaturedRoomsSection: React.FC = () => {
 
         {/* 4 Room Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 items-stretch">
-          {SAMPLE_ROOMS.map((room) => (
+          {featuredRooms.map((room) => (
             <RoomCard
               key={room.id}
               id={room.id}
