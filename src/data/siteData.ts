@@ -302,6 +302,7 @@ export interface DemoBooking {
   guestEmail: string;
   guestPhone?: string;
   specialRequests?: string;
+  paymentScreenshot?: string;
   createdAt: string;
   status: 'Pending Confirmation';
 }

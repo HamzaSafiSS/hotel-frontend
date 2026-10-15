@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Calendar,
@@ -12,6 +12,11 @@ import {
   AlertCircle,
   Sparkles,
   Check,
+  UploadCloud,
+  Eye,
+  Trash2,
+  Receipt,
+  X,
 } from 'lucide-react';
 import { ContentContainer } from '../components/ui/ContentContainer';
 import { Button } from '../components/ui/Button';
@@ -64,8 +69,52 @@ export const Booking: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [specialRequests, setSpecialRequests] = useState<string>('');
+  const [paymentScreenshot, setPaymentScreenshot] = useState<string>('');
+  const [paymentScreenshotName, setPaymentScreenshotName] = useState<string>('');
+  const [paymentScreenshotSize, setPaymentScreenshotSize] = useState<string>('');
+  const [uploadError, setUploadError] = useState<string>('');
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState<boolean>(false);
+  const [modalImageSrc, setModalImageSrc] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [termsAgreed, setTermsAgreed] = useState<boolean>(false);
   const [step2Errors, setStep2Errors] = useState<{ [key: string]: string }>({});
+
+  // File upload handler for payment screenshot
+  const handleFileUpload = (file: File) => {
+    setUploadError('');
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please upload a valid image file (PNG, JPG, JPEG, WEBP).');
+      return;
+    }
+    // Limit to 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Image size exceeds 5MB limit. Please upload a smaller image.');
+      return;
+    }
+
+    const formattedSize =
+      file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      setPaymentScreenshot(result);
+      setPaymentScreenshotName(file.name);
+      setPaymentScreenshotSize(formattedSize);
+      setStep2Errors((prev) => {
+        const next = { ...prev };
+        delete next.paymentScreenshot;
+        return next;
+      });
+    };
+    reader.onerror = () => {
+      setUploadError('Failed to read the image file. Please try again.');
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Completed Demo Booking Record
   const [confirmedBooking, setConfirmedBooking] = useState<DemoBooking | null>(null);
@@ -135,6 +184,9 @@ export const Booking: React.FC = () => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = 'Please enter a valid email address.';
     }
+    if (!paymentScreenshot) {
+      errors.paymentScreenshot = 'Payment screenshot is required before reviewing your reservation.';
+    }
     if (!termsAgreed) {
       errors.terms = 'Please accept the hotel booking policies to complete your reservation.';
     }
@@ -172,6 +224,7 @@ export const Booking: React.FC = () => {
       guestEmail: email,
       guestPhone: phone || undefined,
       specialRequests: specialRequests || undefined,
+      paymentScreenshot: paymentScreenshot || undefined,
       createdAt: new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -649,6 +702,153 @@ export const Booking: React.FC = () => {
                   />
                 </div>
 
+                {/* Payment Screenshot Upload */}
+                <div className="flex flex-col gap-2.5 pt-4 border-t border-[#D8E0EA]">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#062B45] flex items-center gap-1.5">
+                    <Receipt className="w-4 h-4 text-[#C7A66B]" />
+                    <span>Payment Verification Screenshot</span> <span className="text-red-500">*</span>
+                  </label>
+
+                  <p className="text-xs text-[#60758B] leading-relaxed">
+                    Have you completed your deposit or payment via mobile banking (e.g. Telebirr, CBE, or Bank Transfer)? Upload your transaction screenshot or receipt here before reviewing your reservation.
+                  </p>
+
+                  {!paymentScreenshot ? (
+                    <div
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDragging(true);
+                      }}
+                      onDragLeave={() => setIsDragging(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsDragging(false);
+                        const file = e.dataTransfer.files?.[0];
+                        if (file) handleFileUpload(file);
+                      }}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`border-2 border-dashed rounded-xl p-5 sm:p-6 text-center cursor-pointer transition-all duration-200 ${
+                        step2Errors.paymentScreenshot
+                          ? 'border-red-400 bg-red-50/30 ring-2 ring-red-400/20'
+                          : isDragging
+                          ? 'border-[#C7A66B] bg-[#FDFBF7] ring-2 ring-[#C7A66B]/20'
+                          : 'border-[#D8E0EA] hover:border-[#C7A66B] bg-slate-50/60 hover:bg-[#EAF2FF]/20'
+                      }`}
+                    >
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(file);
+                        }}
+                      />
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <div className="w-11 h-11 rounded-full bg-white border border-[#D8E0EA] flex items-center justify-center text-[#C7A66B] shadow-2xs">
+                          <UploadCloud className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="text-xs sm:text-sm font-semibold text-[#062B45]">
+                            Click to upload or drag & drop payment screenshot
+                          </p>
+                          <p className="text-[11px] text-[#60758B] mt-0.5">
+                            Supports PNG, JPG, JPEG, WEBP (Max 5MB)
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          onClick={() => {
+                            setModalImageSrc(paymentScreenshot);
+                            setPreviewModalOpen(true);
+                          }}
+                          className="relative w-14 h-14 rounded-lg overflow-hidden border border-emerald-300 shadow-2xs cursor-pointer group shrink-0"
+                          title="Click to view full image"
+                        >
+                          <img
+                            src={paymentScreenshot}
+                            alt="Payment Screenshot Preview"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          />
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Eye className="w-4 h-4 text-white" />
+                          </div>
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold text-[#062B45] truncate max-w-[180px] sm:max-w-xs block">
+                              {paymentScreenshotName || 'Payment_Screenshot.png'}
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full shrink-0">
+                              <Check className="w-3 h-3 text-emerald-700" /> Attached
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[#60758B] mt-0.5">
+                            {paymentScreenshotSize || 'Ready'} • Click thumbnail to inspect
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setModalImageSrc(paymentScreenshot);
+                            setPreviewModalOpen(true);
+                          }}
+                          className="text-xs font-medium text-[#062B45] hover:text-[#C7A66B] px-2.5 py-1.5 rounded-lg border border-[#D8E0EA] hover:border-[#C7A66B] bg-white transition-colors cursor-pointer flex items-center gap-1"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>View</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="text-xs font-medium text-[#062B45] hover:text-[#C7A66B] px-2.5 py-1.5 rounded-lg border border-[#D8E0EA] hover:border-[#C7A66B] bg-white transition-colors cursor-pointer"
+                        >
+                          Replace
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPaymentScreenshot('');
+                            setPaymentScreenshotName('');
+                            setPaymentScreenshotSize('');
+                            if (fileInputRef.current) fileInputRef.current.value = '';
+                          }}
+                          className="text-xs font-medium text-rose-600 hover:text-rose-700 px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 transition-colors cursor-pointer flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove</span>
+                        </button>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleFileUpload(file);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {(uploadError || step2Errors.paymentScreenshot) && (
+                    <p className="text-xs text-red-600 font-medium flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{uploadError || step2Errors.paymentScreenshot}</span>
+                    </p>
+                  )}
+                </div>
+
                 {/* Terms Acknowledgment */}
                 <div className="pt-2">
                   <label className="flex items-start gap-2.5 cursor-pointer">
@@ -782,6 +982,72 @@ export const Booking: React.FC = () => {
                     {specialRequests && (
                       <div className="mt-2 pt-2 border-t border-[#D8E0EA]/70 text-[#60758B]">
                         <strong>Special Request:</strong> "{specialRequests}"
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Payment Verification Status in Step 3 Review */}
+                  <div className="p-3.5 rounded-lg border border-[#D8E0EA] bg-white text-xs">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] uppercase font-bold text-[#60758B] flex items-center gap-1">
+                        <Receipt className="w-3.5 h-3.5 text-[#C7A66B]" />
+                        <span>Payment Verification</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep(2)}
+                        className="text-[11px] font-semibold text-[#062B45] hover:text-[#C7A66B] flex items-center gap-1 cursor-pointer"
+                      >
+                        {paymentScreenshot ? 'Change Proof' : 'Upload Proof'}
+                      </button>
+                    </div>
+
+                    {paymentScreenshot ? (
+                      <div className="flex items-center gap-3 bg-[#EAF2FF]/30 p-2.5 rounded-lg border border-[#D8E0EA]">
+                        <div
+                          onClick={() => {
+                            setModalImageSrc(paymentScreenshot);
+                            setPreviewModalOpen(true);
+                          }}
+                          className="relative w-12 h-12 rounded-lg overflow-hidden border border-[#D8E0EA] cursor-pointer group shrink-0"
+                          title="Click to view full image"
+                        >
+                          <img
+                            src={paymentScreenshot}
+                            alt="Payment Receipt"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          />
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Eye className="w-3.5 h-3.5 text-white" />
+                          </div>
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-[#062B45] truncate">
+                            {paymentScreenshotName || 'Payment_Screenshot.png'}
+                          </p>
+                          <p className="text-[10px] text-emerald-700 font-medium flex items-center gap-1 mt-0.5">
+                            <Check className="w-3 h-3" /> Attached & Verified for Concierge Review
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setModalImageSrc(paymentScreenshot);
+                            setPreviewModalOpen(true);
+                          }}
+                          className="text-xs font-medium text-[#062B45] hover:text-[#C7A66B] px-2.5 py-1 rounded border border-[#D8E0EA] bg-white transition-colors cursor-pointer"
+                        >
+                          View
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between text-[#60758B] py-1">
+                        <span className="text-slate-500">No payment screenshot attached</span>
+                        <span className="text-[10px] font-medium text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                          Pay on Arrival / Pending
+                        </span>
                       </div>
                     )}
                   </div>
@@ -927,6 +1193,33 @@ export const Booking: React.FC = () => {
                     <span className="text-[#60758B] block text-[11px]">Email</span>
                     <strong>{confirmedBooking.guestEmail}</strong>
                   </div>
+                  {confirmedBooking.paymentScreenshot && (
+                    <div className="sm:col-span-2 pt-2 border-t border-[#D8E0EA]/70 flex items-center gap-3">
+                      <div
+                        onClick={() => {
+                          setModalImageSrc(confirmedBooking.paymentScreenshot || '');
+                          setPreviewModalOpen(true);
+                        }}
+                        className="relative w-12 h-12 rounded-lg overflow-hidden border border-[#D8E0EA] cursor-pointer group shrink-0"
+                        title="Click to view full image"
+                      >
+                        <img
+                          src={confirmedBooking.paymentScreenshot}
+                          alt="Payment Receipt"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Eye className="w-3.5 h-3.5 text-white" />
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-[#60758B] block text-[11px]">Payment Proof</span>
+                        <span className="text-xs font-semibold text-emerald-700 flex items-center gap-1">
+                          <Check className="w-3.5 h-3.5" /> Attached & Recorded for Front Desk
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1034,6 +1327,50 @@ export const Booking: React.FC = () => {
           </div>
         </ContentContainer>
       </section>
+
+      {/* Payment Screenshot Full Preview Modal */}
+      {previewModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fadeIn"
+          onClick={() => setPreviewModalOpen(false)}
+        >
+          <div
+            className="relative bg-white rounded-2xl max-w-2xl w-full p-4 overflow-hidden shadow-2xl flex flex-col gap-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-[#D8E0EA]">
+              <div className="flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-[#C7A66B]" />
+                <h3 className="font-serif text-lg font-medium text-[#062B45]">
+                  Payment Screenshot Preview
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPreviewModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-[#062B45] flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="max-h-[70vh] overflow-auto rounded-lg bg-slate-900 flex items-center justify-center p-2">
+              <img
+                src={modalImageSrc || paymentScreenshot}
+                alt="Payment Screenshot Full Preview"
+                className="max-h-[65vh] w-auto max-w-full object-contain rounded"
+              />
+            </div>
+            <div className="flex justify-between items-center text-xs text-[#60758B] pt-2 border-t border-[#D8E0EA]">
+              <span className="truncate max-w-xs">{paymentScreenshotName || 'Uploaded Screenshot'}</span>
+              <Button variant="secondary" size="sm" onClick={() => setPreviewModalOpen(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

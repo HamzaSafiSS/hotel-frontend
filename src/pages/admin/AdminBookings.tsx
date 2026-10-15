@@ -7,6 +7,7 @@ import {
   Info,
   User,
   BedDouble,
+  Receipt,
 } from 'lucide-react';
 import { useHotelStore } from '../../store/hotelStore';
 import type { AdminBookingRecord, BookingStatus } from '../../store/hotelStore';
@@ -117,6 +118,7 @@ export const AdminBookings: React.FC = () => {
       totalEstimatedPrice: totalEst,
       status: editData.status,
       specialRequests: editData.specialRequests.trim() || undefined,
+      paymentScreenshot: selectedBooking.paymentScreenshot,
     });
 
     setIsEditOpen(false);
@@ -361,6 +363,29 @@ export const AdminBookings: React.FC = () => {
                   <p className="mt-2 text-slate-600 italic">
                     <strong>Special Requests:</strong> "{selectedBooking.specialRequests}"
                   </p>
+                )}
+                {selectedBooking.paymentScreenshot && (
+                  <div className="mt-3 pt-3 border-t border-slate-200">
+                    <p className="text-xs font-semibold text-[#062B45] mb-2 flex items-center gap-1.5">
+                      <Receipt className="w-3.5 h-3.5 text-[#C7A66B]" />
+                      <span>Payment Proof Screenshot</span>
+                    </p>
+                    <a
+                      href={selectedBooking.paymentScreenshot}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block relative w-full max-w-[200px] rounded-lg overflow-hidden border border-slate-200 shadow-xs hover:border-[#C7A66B] transition-colors"
+                    >
+                      <img
+                        src={selectedBooking.paymentScreenshot}
+                        alt="Payment Receipt Screenshot"
+                        className="w-full h-28 object-cover"
+                      />
+                      <span className="absolute inset-0 bg-[#062B45]/60 text-white text-[11px] font-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        View Full Image
+                      </span>
+                    </a>
+                  </div>
                 )}
               </div>
             </div>

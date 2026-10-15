@@ -45,6 +45,7 @@ export interface AdminBookingRecord {
   guestEmail: string;
   guestPhone?: string;
   specialRequests?: string;
+  paymentScreenshot?: string;
   createdAt: string;
   status: BookingStatus;
 }
