@@ -391,7 +391,7 @@ export const MENU_ITEMS: MenuItem[] = [
     description: 'Chilled natural artisan spring water available still or sparkling, served with lemon or cucumber slices.',
     fullDescription: 'Premium natural mineral water sourced from deep artesian springs, naturally filtered through mineral-rich volcanic strata. Served chilled in elegant recycled glass bottles with your choice of still or sparkling, accompanied by fresh citrus slices or garden cucumber.',
     price: 2,
-    imageUrl: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1517093728432-a0440f8d45af?auto=format&fit=crop&w=800&q=80',
     dietary: ['Gluten-Free', 'Pure'],
     allergens: ['None'],
     isAvailable: true,

@@ -40,10 +40,10 @@ export const RoomDetail: React.FC = () => {
 
   // Booking summary form state (prefilled from URL query params)
   const [checkIn, setCheckIn] = useState<string>(
-    () => searchParams.get('checkIn') || getFutureDate(1)
+    () => searchParams.get('from') || searchParams.get('checkIn') || getFutureDate(1)
   );
   const [checkOut, setCheckOut] = useState<string>(
-    () => searchParams.get('checkOut') || getFutureDate(4)
+    () => searchParams.get('to') || searchParams.get('checkOut') || getFutureDate(4)
   );
   const [adults, setAdults] = useState<number>(() =>
     Number(searchParams.get('adults')) || 2
@@ -56,12 +56,12 @@ export const RoomDetail: React.FC = () => {
   );
   const [dateError, setDateError] = useState<string>('');
 
-  // Calculate nights and estimated subtotal
+  // Calculate duration in days (inclusive of both From and To dates)
   const nights = useMemo(() => {
     if (!checkIn || !checkOut) return 1;
     const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? days : 1;
+    const days = Math.round(diff / (1000 * 60 * 60 * 24));
+    return days >= 0 ? days + 1 : 1;
   }, [checkIn, checkOut]);
 
   const estimatedTotal = useMemo(() => {
@@ -78,8 +78,8 @@ export const RoomDetail: React.FC = () => {
   const handleProceedToBooking = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (new Date(checkOut) <= new Date(checkIn)) {
-      setDateError('Check-out date must be after check-in date.');
+    if (new Date(checkOut) < new Date(checkIn)) {
+      setDateError('"To" date must be on or after "From" date.');
       return;
     }
 
@@ -87,6 +87,8 @@ export const RoomDetail: React.FC = () => {
 
     const params = new URLSearchParams({
       roomId: room?.id || '',
+      from: checkIn,
+      to: checkOut,
       checkIn,
       checkOut,
       adults: adults.toString(),
@@ -310,14 +312,14 @@ export const RoomDetail: React.FC = () => {
 
                 {/* Reservation Form */}
                 <form onSubmit={handleProceedToBooking} className="mt-6 flex flex-col gap-4">
-                  {/* Check-In / Check-Out Grid */}
+                  {/* From / To Date Grid */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
                       <label
                         htmlFor="detail-check-in"
                         className="text-[11px] font-bold uppercase tracking-wider text-[#062B45]"
                       >
-                        Check In
+                        From
                       </label>
                       <input
                         id="detail-check-in"
@@ -325,8 +327,8 @@ export const RoomDetail: React.FC = () => {
                         value={checkIn}
                         onChange={(e) => {
                           setCheckIn(e.target.value);
-                          if (new Date(e.target.value) >= new Date(checkOut)) {
-                            setDateError('Check-out date must be after check-in date.');
+                          if (checkOut && new Date(e.target.value) > new Date(checkOut)) {
+                            setDateError('"To" date must be on or after "From" date.');
                           } else {
                             setDateError('');
                           }
@@ -341,16 +343,17 @@ export const RoomDetail: React.FC = () => {
                         htmlFor="detail-check-out"
                         className="text-[11px] font-bold uppercase tracking-wider text-[#062B45]"
                       >
-                        Check Out
+                        To
                       </label>
                       <input
                         id="detail-check-out"
                         type="date"
+                        min={checkIn}
                         value={checkOut}
                         onChange={(e) => {
                           setCheckOut(e.target.value);
-                          if (new Date(checkIn) >= new Date(e.target.value)) {
-                            setDateError('Check-out date must be after check-in date.');
+                          if (checkIn && new Date(checkIn) > new Date(e.target.value)) {
+                            setDateError('"To" date must be on or after "From" date.');
                           } else {
                             setDateError('');
                           }
@@ -443,7 +446,7 @@ export const RoomDetail: React.FC = () => {
                   <div className="mt-3 pt-4 border-t border-[#D8E0EA] flex flex-col gap-2 text-xs">
                     <div className="flex items-center justify-between text-[#60758B]">
                       <span>
-                        ETB {room.pricePerNight} × {nights} {nights === 1 ? 'night' : 'nights'}
+                        ETB {room.pricePerNight} × {nights} {nights === 1 ? 'day' : 'days'}
                         {roomsCount > 1 ? ` × ${roomsCount} rooms` : ''}
                       </span>
                       <span>ETB {estimatedTotal}</span>

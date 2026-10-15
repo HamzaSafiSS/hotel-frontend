@@ -43,10 +43,10 @@ export const Booking: React.FC = () => {
   const initialRoomId = searchParams.get('roomId') || activeRooms[0]?.id || 'deluxe-room';
   const [selectedRoomId, setSelectedRoomId] = useState<string>(initialRoomId);
   const [checkIn, setCheckIn] = useState<string>(
-    () => searchParams.get('checkIn') || getFutureDate(1)
+    () => searchParams.get('from') || searchParams.get('checkIn') || getFutureDate(1)
   );
   const [checkOut, setCheckOut] = useState<string>(
-    () => searchParams.get('checkOut') || getFutureDate(4)
+    () => searchParams.get('to') || searchParams.get('checkOut') || getFutureDate(4)
   );
   const [adults, setAdults] = useState<number>(() =>
     Number(searchParams.get('adults')) || 2
@@ -84,12 +84,12 @@ export const Booking: React.FC = () => {
     );
   }, [activeRooms, selectedRoomId]);
 
-  // Calculate nights
+  // Calculate duration in days (inclusive of both From and To dates)
   const nights = useMemo(() => {
     if (!checkIn || !checkOut) return 1;
     const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? days : 1;
+    const days = Math.round(diff / (1000 * 60 * 60 * 24));
+    return days >= 0 ? days + 1 : 1;
   }, [checkIn, checkOut]);
 
   // Calculate total price: nightly rate * nights * rooms
@@ -101,11 +101,11 @@ export const Booking: React.FC = () => {
   const handleValidateStep1 = (e: React.FormEvent) => {
     e.preventDefault();
     if (!checkIn || !checkOut) {
-      setStep1Error('Please choose both check-in and check-out dates.');
+      setStep1Error('Please choose both "From" and "To" dates.');
       return;
     }
-    if (new Date(checkOut) <= new Date(checkIn)) {
-      setStep1Error('Check-out date must be after check-in date.');
+    if (new Date(checkOut) < new Date(checkIn)) {
+      setStep1Error('"To" date cannot be before "From" date.');
       return;
     }
     if (adults + children > selectedRoom.guests * roomsCount) {
