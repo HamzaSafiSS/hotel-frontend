@@ -81,13 +81,13 @@ export const AdminBookings: React.FC = () => {
     }
 
     if (!editData.checkIn) {
-      errs.checkIn = 'Check-in date is required.';
+      errs.checkIn = '"From" date is required.';
     }
 
     if (!editData.checkOut) {
-      errs.checkOut = 'Check-out date is required.';
-    } else if (editData.checkIn && editData.checkOut <= editData.checkIn) {
-      errs.checkOut = 'Check-out date must be strictly after check-in date.';
+      errs.checkOut = '"To" date is required.';
+    } else if (editData.checkIn && editData.checkOut < editData.checkIn) {
+      errs.checkOut = '"To" date must be on or after "From" date.';
     }
 
     setEditErrors(errs);
@@ -98,10 +98,10 @@ export const AdminBookings: React.FC = () => {
     e.preventDefault();
     if (!validate() || !selectedBooking) return;
 
-    // Recalculate nights
+    // Recalculate duration in days (inclusive of both From and To dates)
     const start = new Date(editData.checkIn);
     const end = new Date(editData.checkOut);
-    const diffDays = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+    const diffDays = Math.max(1, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
     const totalEst = diffDays * selectedBooking.pricePerNight * editData.roomsCount;
 
     updateBooking(selectedBooking.bookingReference, {
@@ -219,7 +219,7 @@ export const AdminBookings: React.FC = () => {
                     <td className="py-3.5 px-4">
                       <p className="font-medium text-[#062B45]">{b.roomTitle}</p>
                       <p className="text-[11px] text-slate-500">
-                        {b.nights} {b.nights === 1 ? 'night' : 'nights'} • {b.roomsCount} room(s)
+                        {b.nights} {b.nights === 1 ? 'day' : 'days'} • {b.roomsCount} room(s)
                       </p>
                     </td>
 
@@ -353,9 +353,9 @@ export const AdminBookings: React.FC = () => {
                   <span>Stay Details</span>
                 </h4>
                 <p><strong>Room:</strong> {selectedBooking.roomTitle} ({selectedBooking.roomCategory})</p>
-                <p><strong>Check-In:</strong> {selectedBooking.checkIn}</p>
-                <p><strong>Check-Out:</strong> {selectedBooking.checkOut}</p>
-                <p><strong>Duration:</strong> {selectedBooking.nights} night(s)</p>
+                <p><strong>From:</strong> {selectedBooking.checkIn}</p>
+                <p><strong>To:</strong> {selectedBooking.checkOut}</p>
+                <p><strong>Duration:</strong> {selectedBooking.nights} day(s)</p>
                 <p><strong>Guests:</strong> {selectedBooking.adults} Adults, {selectedBooking.children} Children</p>
                 {selectedBooking.specialRequests && (
                   <p className="mt-2 text-slate-600 italic">
@@ -434,7 +434,7 @@ export const AdminBookings: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-[#062B45] mb-1">
-                Check-In Date *
+                From Date *
               </label>
               <input
                 type="date"
@@ -449,10 +449,11 @@ export const AdminBookings: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-[#062B45] mb-1">
-                Check-Out Date *
+                To Date *
               </label>
               <input
                 type="date"
+                min={editData.checkIn}
                 value={editData.checkOut}
                 onChange={(e) => setEditData({ ...editData, checkOut: e.target.value })}
                 className="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#C7A66B]"

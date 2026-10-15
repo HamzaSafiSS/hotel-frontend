@@ -379,14 +379,14 @@ export const Booking: React.FC = () => {
 
                 {/* 2. Dates & Occupancy Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-4 border-t border-[#D8E0EA]">
-                  {/* Check In */}
+                  {/* From */}
                   <div className="flex flex-col gap-1.5">
                     <label
                       htmlFor="booking-checkin"
                       className="text-[11px] font-bold uppercase tracking-wider text-[#062B45] flex items-center gap-1.5"
                     >
                       <Calendar className="w-3.5 h-3.5 text-[#C7A66B]" />
-                      <span>Check In</span>
+                      <span>From</span>
                     </label>
                     <input
                       id="booking-checkin"
@@ -398,18 +398,19 @@ export const Booking: React.FC = () => {
                     />
                   </div>
 
-                  {/* Check Out */}
+                  {/* To */}
                   <div className="flex flex-col gap-1.5">
                     <label
                       htmlFor="booking-checkout"
                       className="text-[11px] font-bold uppercase tracking-wider text-[#062B45] flex items-center gap-1.5"
                     >
                       <Calendar className="w-3.5 h-3.5 text-[#C7A66B]" />
-                      <span>Check Out</span>
+                      <span>To</span>
                     </label>
                     <input
                       id="booking-checkout"
                       type="date"
+                      min={checkIn}
                       value={checkOut}
                       onChange={(e) => setCheckOut(e.target.value)}
                       className="bg-white border border-[#D8E0EA] rounded-lg p-2.5 text-xs sm:text-sm font-medium text-[#18324A] outline-none focus:border-[#062B45]"
@@ -748,10 +749,10 @@ export const Booking: React.FC = () => {
                         Dates of Stay
                       </span>
                       <strong className="text-xs sm:text-sm text-[#062B45] block">
-                        {checkIn} to {checkOut}
+                        From {checkIn} to {checkOut}
                       </strong>
                       <span className="text-[11px] text-[#60758B] mt-0.5 block">
-                        {nights} {nights === 1 ? 'Night' : 'Nights'}
+                        {nights} {nights === 1 ? 'Day' : 'Days'}
                       </span>
                     </div>
 
@@ -796,7 +797,7 @@ export const Booking: React.FC = () => {
                     <div className="flex flex-col gap-2.5 text-xs text-[#60758B]">
                       <div className="flex items-center justify-between">
                         <span>
-                          ETB {selectedRoom.pricePerNight} × {nights} {nights === 1 ? 'night' : 'nights'}
+                          ETB {selectedRoom.pricePerNight} × {nights} {nights === 1 ? 'day' : 'days'}
                         </span>
                         <span>ETB {selectedRoom.pricePerNight * nights}</span>
                       </div>
@@ -907,7 +908,7 @@ export const Booking: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[11px]">Dates & Duration</span>
-                    <strong>{confirmedBooking.checkIn}</strong> to <strong>{confirmedBooking.checkOut}</strong> ({confirmedBooking.nights} nights)
+                    From <strong>{confirmedBooking.checkIn}</strong> to <strong>{confirmedBooking.checkOut}</strong> ({confirmedBooking.nights} {confirmedBooking.nights === 1 ? 'day' : 'days'})
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[11px]">Guests & Rooms</span>
@@ -1017,7 +1018,7 @@ export const Booking: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[10px]">Dates:</span>
-                    <strong>{lookedUpBooking.checkIn} to {lookedUpBooking.checkOut}</strong>
+                    <strong>From {lookedUpBooking.checkIn} to {lookedUpBooking.checkOut}</strong>
                   </div>
                   <div>
                     <span className="text-[#60758B] block text-[10px]">Guest:</span>

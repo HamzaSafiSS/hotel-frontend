@@ -226,7 +226,7 @@ export const AdminDashboard: React.FC = () => {
                             </span>
                           </div>
                           <p className="text-xs text-slate-600 mt-0.5">
-                            {b.roomTitle} • {b.nights} nights ({b.checkIn} → {b.checkOut})
+                            {b.roomTitle} • {b.nights} {b.nights === 1 ? 'day' : 'days'} ({b.checkIn} → {b.checkOut})
                           </p>
                         </div>
                       </div>
